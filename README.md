@@ -8,4 +8,5 @@ git fetch origin
 git reset --hard origin/main
 
 Here are some extra expo packages you will need to install:
+expo install firebase react-native-gifted-chat @react-native-community/async-storage
 
