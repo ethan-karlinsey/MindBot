@@ -1,21 +1,36 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import * as React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import WelcomeScreen from './app/screens/WelcomeScreen';
+import LoginScreen from './app/screens/LoginScreen';
+import HomeScreen from './app/screens/HomeScreen';
+import ChatbotScreen from './app/screens/ChatbotScreen';
+
+const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }} >
+        <Stack.Screen 
+          name="Welcome" 
+          component={WelcomeScreen} 
+          options={{ headerTitleAlign: "center" }} />
+        <Stack.Screen
+          name="Sign In"
+          component={LoginScreen}
+          options={{ headerTitleAlign: "center", headerShown: true }} />
+        <Stack.Screen 
+          name="Home"
+          component={HomeScreen}
+          options={{ headerTitleAlign: "center" }}/>
+        <Stack.Screen 
+          name="Chat Bot"
+          component={ChatbotScreen}
+          options={{ headerTitleAlign: "center", headerShown: true }}/>
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+
