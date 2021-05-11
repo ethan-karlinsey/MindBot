@@ -1,24 +1,24 @@
 {
   "files": {
-    "app.js": "/ethan-karlinsey/MindBot/static/js/app.8e41719d.chunk.js",
-    "app.js.map": "/ethan-karlinsey/MindBot/static/js/app.8e41719d.chunk.js.map",
-    "runtime~app.js": "/ethan-karlinsey/MindBot/static/js/runtime~app.33cb625a.js",
-    "runtime~app.js.map": "/ethan-karlinsey/MindBot/static/js/runtime~app.33cb625a.js.map",
-    "static/js/2.ed384061.chunk.js": "/ethan-karlinsey/MindBot/static/js/2.ed384061.chunk.js",
-    "static/js/2.ed384061.chunk.js.map": "/ethan-karlinsey/MindBot/static/js/2.ed384061.chunk.js.map",
-    "favicon-16.png": "/ethan-karlinsey/MindBot/favicon-16.png",
-    "favicon-32.png": "/ethan-karlinsey/MindBot/favicon-32.png",
-    "favicon.ico": "/ethan-karlinsey/MindBot/favicon.ico",
-    "index.html": "/ethan-karlinsey/MindBot/index.html",
-    "manifest.json": "/ethan-karlinsey/MindBot/manifest.json",
-    "serve.json": "/ethan-karlinsey/MindBot/serve.json",
-    "static/js/2.ed384061.chunk.js.LICENSE.txt": "/ethan-karlinsey/MindBot/static/js/2.ed384061.chunk.js.LICENSE.txt",
-    "static/media/background.jpg": "/ethan-karlinsey/MindBot/static/media/background.94ade58e.jpg",
-    "static/media/logo.png": "/ethan-karlinsey/MindBot/static/media/logo.d4080bda.png"
+    "app.js": "/MindBot/static/js/app.8e41719d.chunk.js",
+    "app.js.map": "/MindBot/static/js/app.8e41719d.chunk.js.map",
+    "runtime~app.js": "/MindBot/static/js/runtime~app.6b8f1cb1.js",
+    "runtime~app.js.map": "/MindBot/static/js/runtime~app.6b8f1cb1.js.map",
+    "static/js/2.8417fac8.chunk.js": "/MindBot/static/js/2.8417fac8.chunk.js",
+    "static/js/2.8417fac8.chunk.js.map": "/MindBot/static/js/2.8417fac8.chunk.js.map",
+    "favicon-16.png": "/MindBot/favicon-16.png",
+    "favicon-32.png": "/MindBot/favicon-32.png",
+    "favicon.ico": "/MindBot/favicon.ico",
+    "index.html": "/MindBot/index.html",
+    "manifest.json": "/MindBot/manifest.json",
+    "serve.json": "/MindBot/serve.json",
+    "static/js/2.8417fac8.chunk.js.LICENSE.txt": "/MindBot/static/js/2.8417fac8.chunk.js.LICENSE.txt",
+    "static/media/background.jpg": "/MindBot/static/media/background.94ade58e.jpg",
+    "static/media/logo.png": "/MindBot/static/media/logo.d4080bda.png"
   },
   "entrypoints": [
-    "static/js/runtime~app.33cb625a.js",
-    "static/js/2.ed384061.chunk.js",
+    "static/js/runtime~app.6b8f1cb1.js",
+    "static/js/2.8417fac8.chunk.js",
     "static/js/app.8e41719d.chunk.js"
   ]
 }
