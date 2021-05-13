@@ -3,29 +3,13 @@ import React, { useState, useEffect, useCallback } from 'react';
 //import AsyncStorage from '@react-native-community/async-storage'
 import { GiftedChat } from 'react-native-gifted-chat'
 import { AsyncStorage } from 'react-native'
-import { StyleSheet, Text, TextInput, Button, View, LogBox } from 'react-native';
-import * as firebase from 'firebase'
-import 'firebase/firestore'
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBLo3MIDiCutOt63VqJNkEMgLbI71gxBDE",
-  authDomain: "chatapp-6a550.firebaseapp.com",
-  projectId: "chatapp-6a550",
-  storageBucket: "chatapp-6a550.appspot.com",
-  messagingSenderId: "432038414833",
-  appId: "1:432038414833:web:6a8228bf2fd1f997219c50"
-};
-
-if (firebase.apps.length === 0) {
-  firebase.initializeApp(firebaseConfig);
-}
-
-LogBox.ignoreAllLogs()
+import { StyleSheet, Text, TextInput, Button, View } from 'react-native';
+import { firebase } from '../firebase/config'
 
 const db = firebase.firestore()
 const chatsRef = db.collection('chats')
 
-function ChatbotScreen({ navigation }, props) {
+export default function ChatbotScreen({ navigation }, props) {
   const [user, setUser] = useState(null)
   const [name, setName] = useState('')
   const [messages, setMessages] = useState([])
@@ -99,5 +83,3 @@ const styles = StyleSheet.create({
     borderColor: 'gray'
   }
 });
-
-export default ChatbotScreen;

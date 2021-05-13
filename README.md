@@ -7,9 +7,12 @@ This project was initialized using the "expo init MindBot" command. To set up th
 git fetch origin
 git reset --hard origin/main
 
-Here are some extra expo packages you will need to install:\
-expo install firebase react-native-gifted-chat @react-native-community/async-storage\
-npm install @react-navigation/native @react-navigation/stack\
-expo install react-native-gesture-handler react-native-reanimated react-native-screens react-native-safe-area-context @react-native-community/masked-view\
+Here are some extra expo packages you will need to install:
+
+expo install firebase react-native-gifted-chat @react-native-community/async-storage
+
+npm intall @react-navigation/native @react-navigation/stack react-native-keyboard-aware-scroll-view
+
+expo install react-native-gesture-handler react-native-reanimated react-native-screens react-native-safe-area-context @react-native-community/masked-view
 
 

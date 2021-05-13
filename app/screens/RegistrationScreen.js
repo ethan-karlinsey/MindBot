@@ -3,37 +3,43 @@ import { StyleSheet, Image, Text, TextInput, TouchableOpacity, View, ImageBackgr
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { firebase } from '../firebase/config'
 
-export default function LoginScreen({navigation}) {
+export default function RegistrationScreen({navigation}) {
+    const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [confirmPassword, setConfirmPassword] = useState('')
 
     const onFooterLinkPress = () => {
-        navigation.navigate('Registration')
+        navigation.navigate('Login')
     }
 
-    const onLoginPress = () => {
+    const onRegisterPress = () => {
+        if (password !== confirmPassword) {
+            alert("Passwords don't match.")
+            return
+        }
         firebase
             .auth()
-            .signInWithEmailAndPassword(email, password)
+            .createUserWithEmailAndPassword(email, password)
             .then((response) => {
                 const uid = response.user.uid
+                const data = {
+                    id: uid,
+                    email,
+                    name,
+                };
                 const usersRef = firebase.firestore().collection('users')
                 usersRef
                     .doc(uid)
-                    .get()
-                    .then(firestoreDocument => {
-                        if (!firestoreDocument.exists) {
-                            alert("User does not exist.")
-                            return;
-                        }
-                        const user = firestoreDocument.data()
-                        navigation.navigate('Home', {user: user})
+                    .set(data)
+                    .then(() => {
+                        navigation.navigate("Home", {user: data})
                     })
-                    .catch(error => {
+                    .catch((error) => {
                         alert(error)
                     });
             })
-            .catch(error => {
+            .catch((error) => {
                 alert(error)
             })
     }
@@ -42,13 +48,22 @@ export default function LoginScreen({navigation}) {
         <ImageBackground 
             style={styles.container}
             source={require("../assets/background.jpg")} 
-            blurRadius={5} >
+            blurRadius={5}  >
             <KeyboardAwareScrollView
                 style={{ flex: 1, width: '100%' }}
                 keyboardShouldPersistTaps="always">
                 <Image
                     style={styles.logo}
                     source={require('../assets/logo.png')}
+                />
+                <TextInput
+                    style={styles.input}
+                    placeholder='Name'
+                    placeholderTextColor="#aaaaaa"
+                    onChangeText={(text) => setName(text)}
+                    value={name}
+                    underlineColorAndroid="transparent"
+                    autoCapitalize="none"
                 />
                 <TextInput
                     style={styles.input}
@@ -69,13 +84,23 @@ export default function LoginScreen({navigation}) {
                     underlineColorAndroid="transparent"
                     autoCapitalize="none"
                 />
+                <TextInput
+                    style={styles.input}
+                    placeholderTextColor="#aaaaaa"
+                    secureTextEntry
+                    placeholder='Confirm Password'
+                    onChangeText={(text) => setConfirmPassword(text)}
+                    value={confirmPassword}
+                    underlineColorAndroid="transparent"
+                    autoCapitalize="none"
+                />
                 <TouchableOpacity
                     style={styles.button}
-                    onPress={() => onLoginPress()}>
-                    <Text style={styles.buttonTitle}>Log in</Text>
+                    onPress={() => onRegisterPress()}>
+                    <Text style={styles.buttonTitle}>Create account</Text>
                 </TouchableOpacity>
                 <View style={styles.footerView}>
-                    <Text style={styles.footerText}>Don't have an account? <Text onPress={onFooterLinkPress} style={styles.footerLink}>Sign up</Text></Text>
+                    <Text style={styles.footerText}>Already got an account? <Text onPress={onFooterLinkPress} style={styles.footerLink}>Log in</Text></Text>
                 </View>
             </KeyboardAwareScrollView>
         </ImageBackground>
@@ -106,7 +131,8 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         marginLeft: 30,
         marginRight: 30,
-        paddingLeft: 16
+        paddingLeft: 16,
+        borderColor: "black"
     },
     button: {
         backgroundColor: '#788eec',

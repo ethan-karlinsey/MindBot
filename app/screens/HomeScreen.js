@@ -14,7 +14,7 @@ function HomeScreen({ navigation }, props) {
             </TouchableOpacity>
             <TouchableOpacity 
                 style={styles.button}
-                onPress={() => navigation.navigate("Chat Bot")} >
+                onPress={() => navigation.navigate("Chatbot")} >
                 <Text style={styles.buttonText}>Chat Bot</Text>
             </TouchableOpacity>
             <TouchableOpacity 
@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
         borderRadius: 40,
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "#ffa480",
+        backgroundColor: "#788eec",
         marginBottom: 50
     },
     buttonText: {
