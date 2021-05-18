@@ -1,7 +1,7 @@
-import { Image, ImageBackground, StyleSheet, View, Text, TouchableWithoutFeedback, TouchableOpacity, Button } from 'react-native';
-import React, { useState } from 'react';
+import { Image, ImageBackground, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import React from 'react';
 
-export default function WelcomeScreen({ navigation }, props) {
+export default function WelcomeScreen({ navigation }) {
     return (
         <ImageBackground 
             style={styles.background}

@@ -1,47 +1,36 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { StyleSheet, Image, Text, TextInput, TouchableOpacity, View, ImageBackground } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { firebase } from '../firebase/config'
+import { AuthContext } from '../navigation/AuthProvider';
 
 export default function RegistrationScreen({navigation}) {
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
+    const { register } = useContext(AuthContext);
 
     const onFooterLinkPress = () => {
-        navigation.navigate('Login')
+        navigation.navigate('Login');
     }
 
     const onRegisterPress = () => {
-        if (password !== confirmPassword) {
-            alert("Passwords don't match.")
+        if (!name) {
+            Alert.alert('Name is required.');
+        } else if (!email) {
+            Alert.alert('Email is required.');
+        } else if (!password) {
+            Alert.alert('Password is required.');
+        } else if (password !== confirmPassword) {
+            Alert.alert("Passwords don't match");
             return
+        } else {
+            register(email, password, name);
+            setName('');
+            setEmail('');
+            setPassword('');
+            setConfirmPassword('');
         }
-        firebase
-            .auth()
-            .createUserWithEmailAndPassword(email, password)
-            .then((response) => {
-                const uid = response.user.uid
-                const data = {
-                    id: uid,
-                    email,
-                    name,
-                };
-                const usersRef = firebase.firestore().collection('users')
-                usersRef
-                    .doc(uid)
-                    .set(data)
-                    .then(() => {
-                        navigation.navigate("Home", {user: data})
-                    })
-                    .catch((error) => {
-                        alert(error)
-                    });
-            })
-            .catch((error) => {
-                alert(error)
-            })
     }
 
     return (

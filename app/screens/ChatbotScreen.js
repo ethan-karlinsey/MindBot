@@ -1,85 +1,192 @@
-import { StatusBar } from 'expo-status-bar';
-import React, { useState, useEffect, useCallback } from 'react';
-//import AsyncStorage from '@react-native-community/async-storage'
-import { GiftedChat } from 'react-native-gifted-chat'
-import { AsyncStorage } from 'react-native'
-import { StyleSheet, Text, TextInput, Button, View } from 'react-native';
+import React, { useState, Fragment } from 'react';
+import { GiftedChat, Bubble } from 'react-native-gifted-chat';
+import { StyleSheet, View, Image, Text, Keyboard } from 'react-native';
+import { Avatar, ButtonGroup } from "react-native-elements";
 import { firebase } from '../firebase/config'
+import 'firebase/firestore';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { useCollectionData } from 'react-firebase-hooks/firestore';
+import { createNavigatorFactory } from '@react-navigation/core';
 
-const db = firebase.firestore()
-const chatsRef = db.collection('chats')
+const db = firebase.firestore();
+const chatsRef = db.collection('chats');
+const query = chatsRef.orderBy('createdAt', 'desc');
+const user = ({
+  _id: 'Kohl',
+  name: 'React Native',
+});
+
+const emotionImages = [
+  require('../assets/emotions/happy.png'),
+  require('../assets/emotions/sad.png'),
+  require('../assets/emotions/angry.png'),
+  require('../assets/emotions/crying.png'),
+  require('../assets/emotions/laugh.png'),
+  require('../assets/emotions/nervous.png'),
+  require('../assets/emotions/surprised.png'),
+  require('../assets/emotions/confused.png'),
+  require('../assets/emotions/tired.png'),
+];
+
+
+const emotions = ['Happy', 'Sad', 'Angry', 'Crying', 'Laughing', 'Nervous', 'Surprised', 'Confused', 'Tired', 'None'];
 
 export default function ChatbotScreen({ navigation }, props) {
-  const [user, setUser] = useState(null)
-  const [name, setName] = useState('')
-  const [messages, setMessages] = useState([])
+  const [messages] = useCollectionData(query, { idField: 'id' });
+  const [currentMessage, setCurrentMessage] = useState(null);
+  const [showEmotions, setShowEmotions] = useState(true);
+  //const user = useAuthState(auth);
 
-  useEffect(() => {
-    readUser()
-    const unsubscribe = chatsRef.onSnapshot(querySnapshot => {
-      const messageFirestore = querySnapshot
-        .docChanges()
-        .filter(({ type }) => type === 'added')
-        .map(({ doc }) => {
-          const message = doc.data()
-          return { ...message, createdAt: message.createdAt.toDate() }
-        })
-        .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-      appendMessages(messageFirestore)
+  const sendMessage = (index) => {
+
+    chatsRef.add({
+      _id: currentMessage[0]._id,
+      text: currentMessage[0].text,
+      createdAt: Date.parse(currentMessage[0].createdAt),
+      emotionIndex: index,
+      emotion: emotions[index],
+      user: ({
+        _id: 'Kohl',
+        name: 'React Native',
+      }),
     })
-    return () => unsubscribe()
-  }, [])
+    setCurrentMessage(null);
+  }
 
-  const appendMessages = useCallback((messages) => {
-    setMessages((previousMessages) => GiftedChat.append(previousMessages, messages))
-  }, [messages])
+  const createAvatar = (messageInfo) => {
 
-  async function readUser() {
-    const user = await AsyncStorage.getItem('user')
-    if (user) {
-      setUser(JSON.parse(user))
+    if (messageInfo.currentMessage.emotionIndex == emotionImages.length) {
+      return null;
+
+    } else {
+
+      var emotionImage = emotionImages[messageInfo.currentMessage.emotionIndex];
+
+      return(
+        <Avatar
+          rounded
+          size = 'medium'
+          source = {emotionImage}
+        ></Avatar>
+      )
     }
   }
 
-  async function handlePress() {
-    const _id = Math.random().toString(36).substring(7)
-    const user = {_id, name}
-    await AsyncStorage.setItem('user', JSON.stringify(user))
-    setUser(user)
-  }
+  const createBubble = (messages) => {
 
-  async function handleSend(messages) {
-    const writes = messages.map(m => chatsRef.add(m))
-    await Promise.all(writes)
-  }
-
-  if (!user) {
     return (
-    <View style={styles.container}>
-      <TextInput style={styles.input} placeholder="Enter Name" value={name} onChangeText={setName} />
-      <Button onPress={handlePress} title="Enter" />
-    </View>
-    );
+      <Bubble
+        {... messages}
+
+        textStyle={{
+          right: {
+            color: 'black',
+          },
+          left: {
+            color: 'black',
+          },
+        }}
+
+        timeTextStyle={{
+          left: { 
+             color: 'black' 
+          },
+          right: { 
+            color:'black'
+          } 
+        }}
+
+        wrapperStyle={{
+          left: {
+            backgroundColor: '#F2AE6F',
+          },
+          right: {
+            backgroundColor: '#99BBFF'
+          },
+        }}
+
+        user={messages.currentMessage.user}
+      />
+    )
   }
 
-  return <GiftedChat messages={messages} user={user} onSend={handleSend} />
+  const emotionChoice0 = () => <View style={styles.emotionChoiceView}><Image style={styles.emotionChoiceImage} source={emotionImages[0]}/><Text>Happy</Text></View>
+  const emotionChoice1 = () => <View style={styles.emotionChoiceView}><Image style={styles.emotionChoiceImage} source={emotionImages[1]}/><Text>Sad</Text></View>
+  const emotionChoice2 = () => <View style={styles.emotionChoiceView}><Image style={styles.emotionChoiceImage} source={emotionImages[2]}/><Text>Angry</Text></View>
+  const emotionChoice3 = () => <View style={styles.emotionChoiceView}><Image style={styles.emotionChoiceImage} source={emotionImages[3]}/><Text>Crying</Text></View>
+  const emotionChoice4 = () => <View style={styles.emotionChoiceView}><Image style={styles.emotionChoiceImage} source={emotionImages[4]}/><Text>Laughing</Text></View>
+  const emotionChoice5 = () => <View style={styles.emotionChoiceView}><Image style={styles.emotionChoiceImage} source={emotionImages[5]}/><Text>Nervous</Text></View>
+  const emotionChoice6 = () => <View style={styles.emotionChoiceView}><Image style={styles.emotionChoiceImage} source={emotionImages[6]}/><Text>Surprised</Text></View>
+  const emotionChoice7 = () => <View style={styles.emotionChoiceView}><Image style={styles.emotionChoiceImage} source={emotionImages[7]}/><Text>Confused</Text></View>
+  const emotionChoice8 = () => <View style={styles.emotionChoiceView}><Image style={styles.emotionChoiceImage} source={emotionImages[8]}/><Text>Tired</Text></View>
+  const emotionChoice9 = () => <Text>None</Text>
+
+  const renderEmotionChoices = () => {
+
+    if (showEmotions == true) {
+      return(
+        <Fragment>
+          <Text style={{textAlign:'center'}}>Select an emotion for your message</Text>
+          <ButtonGroup
+            buttons={[{element: emotionChoice0}, {element: emotionChoice1}, {element: emotionChoice2}, {element: emotionChoice3}, {element: emotionChoice4}]}
+            selectedIndex={null}
+            onPress={(index) => getEmotion(index)}
+            containerStyle={{height: '10%'}}
+            textStyle={{color: 'black', textAlign:'center'}}
+          />
+          <ButtonGroup
+            buttons={[{element: emotionChoice5}, {element: emotionChoice6}, {element: emotionChoice7}, {element: emotionChoice8}, {element: emotionChoice9}]}
+            selectedIndex={null}
+            onPress={(index) => getEmotion(index + Math.round((emotionImages.length + 1) / 2))}
+            containerStyle={{height: '10%'}}
+            textStyle={{color: 'black', textAlign:'center'}}
+          />
+        </Fragment>
+      )
+    }
+  }
+
+  const getEmotion = (index) => {
+
+    setShowEmotions(false);
+    sendMessage(index);
+  }
+
+  return (
+          <View style={styles.chatBotContainer}>
+            <GiftedChat
+              messages={messages}
+              user={user}
+              onSend={(messages) => {Keyboard.dismiss(); setCurrentMessage(messages); setShowEmotions(true);}}
+              renderAvatar={(messages) => createAvatar(messages)}
+              showUserAvatar={true}
+              showAvatarForEveryMessage={true}
+              renderAllAvatars={true}
+              renderBubble={(messages) => createBubble(messages)}
+              alwaysShowSend={true}
+            />
+            {renderEmotionChoices()}
+          </View>
+        )
   
-}
+};
 
 const styles = StyleSheet.create({
-  container: {
+  chatBotContainer: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
     justifyContent: 'center',
-    padding: 30,
+    backgroundColor: '#E5E5E5',
   },
-  input: {
-    height: 50,
-    width: '100%',
-    borderWidth: 1,
-    padding: 15,
-    marginBottom: 20,
-    borderColor: 'gray'
+  emotionChoiceView: {
+    flex:1,
+    alignItems:'center',
+    justifyContent:'center'
+  },
+  emotionChoiceImage: {
+    flex: 1,
+    resizeMode: 'contain'
+  },
+  emotionChoiceFragment: {
+    backgroundColor: '#DEE0E3'
   }
 });
