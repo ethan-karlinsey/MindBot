@@ -1,33 +1,13 @@
-import React, { useState, Fragment } from 'react';
+import React, { useState, useContext, useEffect, Fragment } from 'react';
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 import { StyleSheet, View, Image, Text, Keyboard } from 'react-native';
 import { Avatar, ButtonGroup } from "react-native-elements";
-import * as firebase from 'firebase';
+import { firebase } from '../firebase/config'
 import 'firebase/firestore';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 import { createNavigatorFactory } from '@react-navigation/core';
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBLo3MIDiCutOt63VqJNkEMgLbI71gxBDE",
-  authDomain: "chatapp-6a550.firebaseapp.com",
-  projectId: "chatapp-6a550",
-  storageBucket: "chatapp-6a550.appspot.com",
-  messagingSenderId: "432038414833",
-  appId: "1:432038414833:web:6a8228bf2fd1f997219c50"
-};
-
-if (firebase.apps.length === 0) {
-  firebase.initializeApp(firebaseConfig);
-}
-
-const db = firebase.firestore();
-const chatsRef = db.collection('chats');
-const query = chatsRef.orderBy('createdAt', 'desc');
-const user = ({
-  _id: 'Kohl',
-  name: 'React Native',
-});
+import { AuthContext } from '../navigation/AuthProvider';
 
 const emotionImages = [
   require('../assets/emotions/happy.png'),
@@ -43,11 +23,44 @@ const emotionImages = [
 
 const emotions = ['Happy', 'Sad', 'Angry', 'Crying', 'Laughing', 'Nervous', 'Surprised', 'Confused', 'Tired', 'None'];
 
-function ChatbotScreen({ navigation }, props) {
-  const [messages] = useCollectionData(query, { idField: 'id' });
+export default function ChatbotScreen({ navigation }, props) {
+  
   const [currentMessage, setCurrentMessage] = useState(null);
-  const [showEmotions, setShowEmotions] = useState(true);
-  //const user = useAuthState(auth);
+  const [showEmotions, setShowEmotions] = useState(false);
+  const { user } = useContext(AuthContext);
+  const db = firebase.firestore();
+  const chatsRef = db.collection(user.uid);
+  const query = chatsRef.orderBy('createdAt', 'desc');
+  const [messages] = useCollectionData(query, { idField: 'id' });
+  const [id, setId] = useState('');
+  const [name, setName] = useState('');
+
+  useEffect(() => {
+        let isMounted = true;
+        async function getUserInfo() {
+            try {
+                let doc = await firebase
+                    .firestore()
+                    .collection('users')
+                    .doc(user.uid)
+                    .get();
+
+                if (!doc.exists) {
+                    console.log('User data not found');
+                } else {
+                    let data = doc.data();
+                    if (isMounted) {
+                      setName(data.name);
+                      setId(data._id);
+                    } 
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        getUserInfo();
+        return () => { isMounted = false }
+    })
 
   const sendMessage = (index) => {
 
@@ -58,9 +71,9 @@ function ChatbotScreen({ navigation }, props) {
       emotionIndex: index,
       emotion: emotions[index],
       user: ({
-        _id: 'Kohl',
-        name: 'React Native',
-      }),
+        _id: 'ab',
+        name: 'Other user'
+      })
     })
     setCurrentMessage(null);
   }
@@ -168,7 +181,10 @@ function ChatbotScreen({ navigation }, props) {
           <View style={styles.chatBotContainer}>
             <GiftedChat
               messages={messages}
-              user={user}
+              user={({
+                _id: id,
+                name: name
+              })}
               onSend={(messages) => {Keyboard.dismiss(); setCurrentMessage(messages); setShowEmotions(true);}}
               renderAvatar={(messages) => createAvatar(messages)}
               showUserAvatar={true}
@@ -202,5 +218,3 @@ const styles = StyleSheet.create({
     backgroundColor: '#DEE0E3'
   }
 });
-
-export default ChatbotScreen;
