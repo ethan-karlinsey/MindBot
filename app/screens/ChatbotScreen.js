@@ -1,12 +1,13 @@
 import React, { useState, Fragment } from 'react';
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
-import { StyleSheet, View, Image, Text, Keyboard } from 'react-native';
-import { Avatar, ButtonGroup } from "react-native-elements";
-import * as firebase from 'firebase';
+import { StyleSheet, View, Image, Text, Keyboard, } from 'react-native';
+import { Avatar, ButtonGroup, Overlay } from "react-native-elements";
+import firebase from 'firebase';
 import 'firebase/firestore';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 import { createNavigatorFactory } from '@react-navigation/core';
+import Modal from './Modal.js';
 
 const firebaseConfig = {
   apiKey: "AIzaSyBLo3MIDiCutOt63VqJNkEMgLbI71gxBDE",
@@ -25,7 +26,7 @@ const db = firebase.firestore();
 const chatsRef = db.collection('chats');
 const query = chatsRef.orderBy('createdAt', 'desc');
 const user = ({
-  _id: 'Kohl',
+  _id: 'Ethan',
   name: 'React Native',
 });
 
@@ -46,7 +47,7 @@ const emotions = ['Happy', 'Sad', 'Angry', 'Crying', 'Laughing', 'Nervous', 'Sur
 function ChatbotScreen({ navigation }, props) {
   const [messages] = useCollectionData(query, { idField: 'id' });
   const [currentMessage, setCurrentMessage] = useState(null);
-  const [showEmotions, setShowEmotions] = useState(true);
+  const [showEmotions, setShowEmotions] = useState(false);
   //const user = useAuthState(auth);
 
   const sendMessage = (index) => {
@@ -58,7 +59,7 @@ function ChatbotScreen({ navigation }, props) {
       emotionIndex: index,
       emotion: emotions[index],
       user: ({
-        _id: 'Kohl',
+        _id: 'Ethan',
         name: 'React Native',
       }),
     })
@@ -137,7 +138,7 @@ function ChatbotScreen({ navigation }, props) {
 
     if (showEmotions == true) {
       return(
-        <Fragment>
+        <View>
           <Text style={{textAlign:'center'}}>Select an emotion for your message</Text>
           <ButtonGroup
             buttons={[{element: emotionChoice0}, {element: emotionChoice1}, {element: emotionChoice2}, {element: emotionChoice3}, {element: emotionChoice4}]}
@@ -153,7 +154,7 @@ function ChatbotScreen({ navigation }, props) {
             containerStyle={{height: '10%'}}
             textStyle={{color: 'black', textAlign:'center'}}
           />
-        </Fragment>
+        </View>
       )
     }
   }
@@ -177,7 +178,28 @@ function ChatbotScreen({ navigation }, props) {
               renderBubble={(messages) => createBubble(messages)}
               alwaysShowSend={true}
             />
-            {renderEmotionChoices()}
+            <Modal transparent={true} visible={showEmotions}>
+              <View style={{backgroundColor:"#000000aa",flex:1}}>
+                <View style={styles.emotionPopUp}>
+                  <Text style={{textAlign:'center'}}>Select an emotion for your message</Text>
+                  <ButtonGroup
+                    buttons={[{element: emotionChoice0}, {element: emotionChoice1}, {element: emotionChoice2}, {element: emotionChoice3}, {element: emotionChoice4}]}
+                    selectedIndex={null}
+                    onPress={(index) => getEmotion(index)}
+                    containerStyle={{height: '10%'}}
+                    textStyle={{color: 'black', textAlign:'center'}}
+                  />
+                  <ButtonGroup
+                    buttons={[{element: emotionChoice5}, {element: emotionChoice6}, {element: emotionChoice7}, {element: emotionChoice8}, {element: emotionChoice9}]}
+                    selectedIndex={null}
+                    onPress={(index) => getEmotion(index + Math.round((emotionImages.length + 1) / 2))}
+                    containerStyle={{height: '10%'}}
+                    textStyle={{color: 'black', textAlign:'center'}}
+                  />
+                </View>
+              </View>
+            </Modal>
+            {/*renderEmotionChoices()*/}
           </View>
         )
   
@@ -200,6 +222,13 @@ const styles = StyleSheet.create({
   },
   emotionChoiceFragment: {
     backgroundColor: '#DEE0E3'
+  },
+  emotionPopUp: {
+    backgroundColor: "#ffffff",
+    margin: 50,
+    padding: 40,
+    borderRadius: 10,
+    flex: 1
   }
 });
 
