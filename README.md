@@ -12,5 +12,8 @@ npm install @react-navigation/native @react-navigation/stack\
 npm install react-native-elements\
 npm install firebase react-firebase-hooks
 
+expo install modal
+expo install modal-react-native-web
+
 
 
