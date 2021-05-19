@@ -71,8 +71,8 @@ export default function ChatbotScreen({ navigation }, props) {
       emotionIndex: index,
       emotion: emotions[index],
       user: ({
-        _id: 'ab',
-        name: 'Other user'
+        _id: id,
+        name: name
       })
     })
     setCurrentMessage(null);
