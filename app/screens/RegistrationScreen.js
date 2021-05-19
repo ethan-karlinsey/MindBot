@@ -3,24 +3,33 @@ import { StyleSheet, Image, Text, TextInput, TouchableOpacity, View, ImageBackgr
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { AuthContext } from '../navigation/AuthProvider';
 
-export default function LoginScreen({navigation}) {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const { login } = useContext(AuthContext);
+export default function RegistrationScreen({navigation}) {
+    const [name, setName] = useState('')
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [confirmPassword, setConfirmPassword] = useState('')
+    const { register } = useContext(AuthContext);
 
     const onFooterLinkPress = () => {
-        navigation.navigate('Registration');
+        navigation.navigate('Login');
     }
 
-    const onLoginPress = () => {
-        if (!email) {
-            Alert.alert('Email field is required.');
+    const onRegisterPress = () => {
+        if (!name) {
+            Alert.alert('Name is required.');
+        } else if (!email) {
+            Alert.alert('Email is required.');
         } else if (!password) {
-            Alert.alert('Password field is required.');
+            Alert.alert('Password is required.');
+        } else if (password !== confirmPassword) {
+            Alert.alert("Passwords don't match");
+            return
         } else {
-            login(email, password);
+            register(email, password, name);
+            setName('');
             setEmail('');
             setPassword('');
+            setConfirmPassword('');
         }
     }
 
@@ -28,13 +37,22 @@ export default function LoginScreen({navigation}) {
         <ImageBackground 
             style={styles.container}
             source={require("../assets/background.jpg")} 
-            blurRadius={5} >
+            blurRadius={5}  >
             <KeyboardAwareScrollView
                 style={{ flex: 1, width: '100%' }}
                 keyboardShouldPersistTaps="always">
                 <Image
                     style={styles.logo}
                     source={require('../assets/logo.png')}
+                />
+                <TextInput
+                    style={styles.input}
+                    placeholder='Name'
+                    placeholderTextColor="#aaaaaa"
+                    onChangeText={(text) => setName(text)}
+                    value={name}
+                    underlineColorAndroid="transparent"
+                    autoCapitalize="none"
                 />
                 <TextInput
                     style={styles.input}
@@ -55,13 +73,23 @@ export default function LoginScreen({navigation}) {
                     underlineColorAndroid="transparent"
                     autoCapitalize="none"
                 />
+                <TextInput
+                    style={styles.input}
+                    placeholderTextColor="#aaaaaa"
+                    secureTextEntry
+                    placeholder='Confirm Password'
+                    onChangeText={(text) => setConfirmPassword(text)}
+                    value={confirmPassword}
+                    underlineColorAndroid="transparent"
+                    autoCapitalize="none"
+                />
                 <TouchableOpacity
                     style={styles.button}
-                    onPress={() => onLoginPress()}>
-                    <Text style={styles.buttonTitle}>Log in</Text>
+                    onPress={() => onRegisterPress()}>
+                    <Text style={styles.buttonTitle}>Create account</Text>
                 </TouchableOpacity>
                 <View style={styles.footerView}>
-                    <Text style={styles.footerText}>Don't have an account? <Text onPress={onFooterLinkPress} style={styles.footerLink}>Sign up</Text></Text>
+                    <Text style={styles.footerText}>Already got an account? <Text onPress={onFooterLinkPress} style={styles.footerLink}>Log in</Text></Text>
                 </View>
             </KeyboardAwareScrollView>
         </ImageBackground>
@@ -92,7 +120,8 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         marginLeft: 30,
         marginRight: 30,
-        paddingLeft: 16
+        paddingLeft: 16,
+        borderColor: "black"
     },
     button: {
         backgroundColor: '#788eec',
