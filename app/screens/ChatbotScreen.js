@@ -9,18 +9,35 @@ import { useCollectionData } from 'react-firebase-hooks/firestore';
 import { createNavigatorFactory } from '@react-navigation/core';
 import Modal from './Modal.js';
 import { AuthContext } from '../navigation/AuthProvider';
+import { Platform } from 'react-native';
 
-const emotionImages = [
-  require('../assets/emotions/happy.png'),
-  require('../assets/emotions/sad.png'),
-  require('../assets/emotions/angry.png'),
-  require('../assets/emotions/crying.png'),
-  require('../assets/emotions/laugh.png'),
-  require('../assets/emotions/nervous.png'),
-  require('../assets/emotions/surprised.png'),
-  require('../assets/emotions/confused.png'),
-  require('../assets/emotions/tired.png'),
-];
+let emotionImages;
+
+if (Platform.OS === 'web') {
+  emotionImages = [
+    require('../assets/emotions/happy.png'),
+    require('../assets/emotions/sad.png'),
+    require('../assets/emotions/angry.png'),
+    require('../assets/emotions/crying.png'),
+    require('../assets/emotions/laugh.png'),
+    require('../assets/emotions/nervous.png'),
+    require('../assets/emotions/surprised.png'),
+    require('../assets/emotions/confused.png'),
+    require('../assets/emotions/tired.png'),
+  ];
+} else {
+  emotionImages = [
+    require('../assets/emotions/happy.png'),
+    require('../assets/emotions/sad.png'),
+    require('../assets/emotions/angry.png'),
+    require('../assets/emotions/crying.png'),
+    require('../assets/emotions/laugh.png'),
+    require('../assets/emotions/nervous.png'),
+    require('../assets/emotions/surprised.png'),
+    require('../assets/emotions/confused.png'),
+    require('../assets/emotions/tired.png'),
+  ];
+}
 
 const emotions = ['Happy', 'Sad', 'Angry', 'Crying', 'Laughing', 'Nervous', 'Surprised', 'Confused', 'Tired', 'None'];
 
@@ -161,15 +178,15 @@ export default function ChatbotScreen({ navigation }, props) {
             <Modal transparent={true} visible={showEmotions}>
               <View style={{backgroundColor:"#000000aa", flex:1}}>
                 <View style={styles.emotionPopUp}>
-                  <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(0)}><Image style={{maxHeight: "10%"}} source={emotionImages[0]}/><Text style={styles.buttonText}>Happy</Text></TouchableOpacity>
-                  <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(1)}><Image style={{maxHeight: "10%"}} source={emotionImages[1]}/><Text style={styles.buttonText}>Sad</Text></TouchableOpacity>
-                  <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(2)}><Image style={{maxHeight: "10%"}} source={emotionImages[2]}/><Text style={styles.buttonText}>Angry</Text></TouchableOpacity>
-                  <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(3)}><Image style={{maxHeight: "10%"}} source={emotionImages[3]}/><Text style={styles.buttonText}>Crying</Text></TouchableOpacity>
-                  <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(4)}><Image style={{maxHeight: "10%"}} source={emotionImages[4]}/><Text style={styles.buttonText}>Laughing</Text></TouchableOpacity>
-                  <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(5)}><Image style={{maxHeight: "10%"}} source={emotionImages[5]}/><Text style={styles.buttonText}>Nervous</Text></TouchableOpacity>
-                  <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(6)}><Image style={{maxHeight: "10%"}} source={emotionImages[6]}/><Text style={styles.buttonText}>Surprised</Text></TouchableOpacity>
-                  <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(7)}><Image style={{maxHeight: "10%"}} source={emotionImages[7]}/><Text style={styles.buttonText}>Confused</Text></TouchableOpacity>
-                  <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(8)}><Image style={{maxHeight: "10%"}} source={emotionImages[8]}/><Text style={styles.buttonText}>Tired</Text></TouchableOpacity>
+                  <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(0)}><Image style={styles.buttonImage} source={emotionImages[0]}/><Text style={styles.buttonText}>Happy</Text></TouchableOpacity>
+                  <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(1)}><Image style={styles.buttonImage} source={emotionImages[1]}/><Text style={styles.buttonText}>Sad</Text></TouchableOpacity>
+                  <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(2)}><Image style={styles.buttonImage} source={emotionImages[2]}/><Text style={styles.buttonText}>Angry</Text></TouchableOpacity>
+                  <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(3)}><Image style={styles.buttonImage} source={emotionImages[3]}/><Text style={styles.buttonText}>Crying</Text></TouchableOpacity>
+                  <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(4)}><Image style={styles.buttonImage} source={emotionImages[4]}/><Text style={styles.buttonText}>Laughing</Text></TouchableOpacity>
+                  <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(5)}><Image style={styles.buttonImage} source={emotionImages[5]}/><Text style={styles.buttonText}>Nervous</Text></TouchableOpacity>
+                  <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(6)}><Image style={styles.buttonImage} source={emotionImages[6]}/><Text style={styles.buttonText}>Surprised</Text></TouchableOpacity>
+                  <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(7)}><Image style={styles.buttonImage} source={emotionImages[7]}/><Text style={styles.buttonText}>Confused</Text></TouchableOpacity>
+                  <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(8)}><Image style={styles.buttonImage} source={emotionImages[8]}/><Text style={styles.buttonText}>Tired</Text></TouchableOpacity>
                   <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(9)}><Text style={styles.buttonText}>None</Text></TouchableOpacity>
                 </View>
               </View>
@@ -196,8 +213,7 @@ const styles = StyleSheet.create({
   },
   emotionPopUp: {
     backgroundColor: "#ffffff",
-    margin: 50,
-    padding: 40,
+    margin: 10,
     borderRadius: 10,
     flex: 1,
     display: 'flex',
@@ -207,17 +223,24 @@ const styles = StyleSheet.create({
     flexDirection: 'row'
   },
   emotionButton: {
-    margin: 10,
+    marginVertical: 10,
+    marginHorizontal: 10,
     borderRadius: 10,
     padding: 10,
     backgroundColor: '#f0f8ff',
     justifyContent: 'center',
-    minWidth: "40%"
+    alignItems: 'center',
+    minWidth: "35%"
   },
   buttonText: {
     textAlign: 'center',
     fontWeight: 'bold',
-    fontSize: 18,
+    fontSize: 14,
     margin: 5
+  },
+  buttonImage: {
+    width: 75,
+    height: 75,
+    alignItems: 'center'
   }
 });
