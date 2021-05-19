@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from 'react';
+import React, { useState, useContext, useEffect, Fragment } from 'react';
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 import { StyleSheet, View, Image, Text, Keyboard } from 'react-native';
 import { Avatar, ButtonGroup } from "react-native-elements";
@@ -7,14 +7,7 @@ import 'firebase/firestore';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 import { createNavigatorFactory } from '@react-navigation/core';
-
-const db = firebase.firestore();
-const chatsRef = db.collection('chats');
-const query = chatsRef.orderBy('createdAt', 'desc');
-const user = ({
-  _id: 'Kohl',
-  name: 'React Native',
-});
+import { AuthContext } from '../navigation/AuthProvider';
 
 const emotionImages = [
   require('../assets/emotions/happy.png'),
@@ -32,9 +25,42 @@ const emotionImages = [
 const emotions = ['Happy', 'Sad', 'Angry', 'Crying', 'Laughing', 'Nervous', 'Surprised', 'Confused', 'Tired', 'None'];
 
 export default function ChatbotScreen({ navigation }, props) {
-  const [messages] = useCollectionData(query, { idField: 'id' });
+  
   const [currentMessage, setCurrentMessage] = useState(null);
-  const [showEmotions, setShowEmotions] = useState(true);
+  const [showEmotions, setShowEmotions] = useState(false);
+  const { user } = useContext(AuthContext);
+  const db = firebase.firestore();
+  const chatsRef = db.collection(user.uid);
+  const query = chatsRef.orderBy('createdAt', 'desc');
+  const [messages] = useCollectionData(query, { idField: 'id' });
+  const [id, setId] = useState('');
+  const [name, setName] = useState('');
+  useEffect(() => {
+        let isMounted = true;
+        async function getUserInfo() {
+            try {
+                let doc = await firebase
+                    .firestore()
+                    .collection('users')
+                    .doc(user.uid)
+                    .get();
+
+                if (!doc.exists) {
+                    console.log('User data not found');
+                } else {
+                    let data = doc.data();
+                    if (isMounted) {
+                      setName(data.name);
+                      setId(data._id);
+                    } 
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        getUserInfo();
+        return () => { isMounted = false }
+    })
   //const user = useAuthState(auth);
 
   const sendMessage = (index) => {
@@ -46,9 +72,9 @@ export default function ChatbotScreen({ navigation }, props) {
       emotionIndex: index,
       emotion: emotions[index],
       user: ({
-        _id: 'Kohl',
-        name: 'React Native',
-      }),
+        _id: id,
+        name: name
+      })
     })
     setCurrentMessage(null);
   }
