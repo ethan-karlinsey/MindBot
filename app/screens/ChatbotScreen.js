@@ -1,6 +1,6 @@
 import React, { useState, Fragment } from 'react';
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
-import { StyleSheet, View, Image, Text, Keyboard, } from 'react-native';
+import { StyleSheet, View, Image, Text, Keyboard, TouchableOpacity } from 'react-native';
 import { Avatar, ButtonGroup, Overlay } from "react-native-elements";
 import firebase from 'firebase';
 import 'firebase/firestore';
@@ -123,42 +123,6 @@ function ChatbotScreen({ navigation }, props) {
     )
   }
 
-  const emotionChoice0 = () => <View style={styles.emotionChoiceView}><Image style={styles.emotionChoiceImage} source={emotionImages[0]}/><Text>Happy</Text></View>
-  const emotionChoice1 = () => <View style={styles.emotionChoiceView}><Image style={styles.emotionChoiceImage} source={emotionImages[1]}/><Text>Sad</Text></View>
-  const emotionChoice2 = () => <View style={styles.emotionChoiceView}><Image style={styles.emotionChoiceImage} source={emotionImages[2]}/><Text>Angry</Text></View>
-  const emotionChoice3 = () => <View style={styles.emotionChoiceView}><Image style={styles.emotionChoiceImage} source={emotionImages[3]}/><Text>Crying</Text></View>
-  const emotionChoice4 = () => <View style={styles.emotionChoiceView}><Image style={styles.emotionChoiceImage} source={emotionImages[4]}/><Text>Laughing</Text></View>
-  const emotionChoice5 = () => <View style={styles.emotionChoiceView}><Image style={styles.emotionChoiceImage} source={emotionImages[5]}/><Text>Nervous</Text></View>
-  const emotionChoice6 = () => <View style={styles.emotionChoiceView}><Image style={styles.emotionChoiceImage} source={emotionImages[6]}/><Text>Surprised</Text></View>
-  const emotionChoice7 = () => <View style={styles.emotionChoiceView}><Image style={styles.emotionChoiceImage} source={emotionImages[7]}/><Text>Confused</Text></View>
-  const emotionChoice8 = () => <View style={styles.emotionChoiceView}><Image style={styles.emotionChoiceImage} source={emotionImages[8]}/><Text>Tired</Text></View>
-  const emotionChoice9 = () => <Text>None</Text>
-
-  const renderEmotionChoices = () => {
-
-    if (showEmotions == true) {
-      return(
-        <View>
-          <Text style={{textAlign:'center'}}>Select an emotion for your message</Text>
-          <ButtonGroup
-            buttons={[{element: emotionChoice0}, {element: emotionChoice1}, {element: emotionChoice2}, {element: emotionChoice3}, {element: emotionChoice4}]}
-            selectedIndex={null}
-            onPress={(index) => getEmotion(index)}
-            containerStyle={{height: '10%'}}
-            textStyle={{color: 'black', textAlign:'center'}}
-          />
-          <ButtonGroup
-            buttons={[{element: emotionChoice5}, {element: emotionChoice6}, {element: emotionChoice7}, {element: emotionChoice8}, {element: emotionChoice9}]}
-            selectedIndex={null}
-            onPress={(index) => getEmotion(index + Math.round((emotionImages.length + 1) / 2))}
-            containerStyle={{height: '10%'}}
-            textStyle={{color: 'black', textAlign:'center'}}
-          />
-        </View>
-      )
-    }
-  }
-
   const getEmotion = (index) => {
 
     setShowEmotions(false);
@@ -181,28 +145,21 @@ function ChatbotScreen({ navigation }, props) {
             <Modal transparent={true} visible={showEmotions}>
               <View style={{backgroundColor:"#000000aa",flex:1}}>
                 <View style={styles.emotionPopUp}>
-                  <Text style={{textAlign:'center'}}>Select an emotion for your message</Text>
-                  <ButtonGroup
-                    buttons={[{element: emotionChoice0}, {element: emotionChoice1}, {element: emotionChoice2}, {element: emotionChoice3}, {element: emotionChoice4}]}
-                    selectedIndex={null}
-                    onPress={(index) => getEmotion(index)}
-                    containerStyle={{height: '10%'}}
-                    textStyle={{color: 'black', textAlign:'center'}}
-                  />
-                  <ButtonGroup
-                    buttons={[{element: emotionChoice5}, {element: emotionChoice6}, {element: emotionChoice7}, {element: emotionChoice8}, {element: emotionChoice9}]}
-                    selectedIndex={null}
-                    onPress={(index) => getEmotion(index + Math.round((emotionImages.length + 1) / 2))}
-                    containerStyle={{height: '10%'}}
-                    textStyle={{color: 'black', textAlign:'center'}}
-                  />
+                  <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(0)}> <Image  source={emotionImages[0]}/><Text>Happy</Text> </TouchableOpacity>
+                  <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(1)}> <Image source={emotionImages[1]}/><Text>Sad</Text> </TouchableOpacity>
+                  <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(2)}> <Image source={emotionImages[2]}/><Text>Angry</Text> </TouchableOpacity>
+                  <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(3)}> <Image source={emotionImages[3]}/><Text>Crying</Text> </TouchableOpacity>
+                  <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(4)}> <Image source={emotionImages[4]}/><Text>Laughing</Text> </TouchableOpacity>
+                  <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(5)}> <Image source={emotionImages[5]}/><Text>Nervous</Text> </TouchableOpacity>
+                  <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(6)}> <Image source={emotionImages[6]}/><Text>Surprised</Text> </TouchableOpacity>
+                  <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(7)}> <Image source={emotionImages[7]}/><Text>Confused</Text> </TouchableOpacity>
+                  <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(8)}> <Image source={emotionImages[8]}/><Text>Tired</Text> </TouchableOpacity>
+                  <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(9)}> <Text>None</Text> </TouchableOpacity>
                 </View>
               </View>
             </Modal>
-            {/*renderEmotionChoices()*/}
           </View>
         )
-  
 };
 
 const styles = StyleSheet.create({
@@ -213,8 +170,6 @@ const styles = StyleSheet.create({
   },
   emotionChoiceView: {
     flex:1,
-    alignItems:'center',
-    justifyContent:'center'
   },
   emotionChoiceImage: {
     flex: 1,
@@ -228,7 +183,20 @@ const styles = StyleSheet.create({
     margin: 50,
     padding: 40,
     borderRadius: 10,
-    flex: 1
+    flex: 1,
+    display: 'flex',
+    flexWrap: 'wrap',
+    alignContent: 'center',
+    flexDirection: 'row'
+  },
+  emotionButton: {
+    margin: 10,
+    padding: 50,
+    borderRadius: 10,
+    flex: 1,
+    backgroundColor: '#f0f8ff',
+    alignContent: 'center',
+    minWidth: '45%'
   }
 });
 
