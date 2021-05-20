@@ -1,7 +1,7 @@
 {
   "files": {
-    "app.js": "/MindBot/static/js/app.ecd761a9.chunk.js",
-    "app.js.map": "/MindBot/static/js/app.ecd761a9.chunk.js.map",
+    "app.js": "/MindBot/static/js/app.c90a55ee.chunk.js",
+    "app.js.map": "/MindBot/static/js/app.c90a55ee.chunk.js.map",
     "runtime~app.js": "/MindBot/static/js/runtime~app.6b8f1cb1.js",
     "runtime~app.js.map": "/MindBot/static/js/runtime~app.6b8f1cb1.js.map",
     "static/js/2.5271c9e7.chunk.js": "/MindBot/static/js/2.5271c9e7.chunk.js",
@@ -44,6 +44,6 @@
   "entrypoints": [
     "static/js/runtime~app.6b8f1cb1.js",
     "static/js/2.5271c9e7.chunk.js",
-    "static/js/app.ecd761a9.chunk.js"
+    "static/js/app.c90a55ee.chunk.js"
   ]
 }
