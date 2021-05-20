@@ -1,10 +1,9 @@
-import React, { useState, useContext, useEffect, Fragment } from 'react';
+import React, { useState, useContext, useLayoutEffect } from 'react';
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 import { StyleSheet, View, Image, Text, Keyboard, TouchableOpacity } from 'react-native';
-import { Avatar, ButtonGroup, Overlay } from "react-native-elements";
+import { Avatar } from "react-native-elements";
 import firebase from 'firebase';
 import 'firebase/firestore';
-import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 import { createNavigatorFactory } from '@react-navigation/core';
 import Modal from './Modal.js';
@@ -53,7 +52,7 @@ export default function ChatbotScreen({ navigation }, props) {
   const [id, setId] = useState('');
   const [name, setName] = useState('');
 
-  useEffect(() => {
+  useLayoutEffect(() => {
         let isMounted = true;
         async function getUserInfo() {
             try {
@@ -88,10 +87,10 @@ export default function ChatbotScreen({ navigation }, props) {
       createdAt: Date.parse(currentMessage[0].createdAt),
       emotionIndex: index,
       emotion: emotions[index],
-      user: ({
+      user: {
         _id: id,
         name: name
-      })
+      }
     })
     setCurrentMessage(null);
   }
@@ -116,6 +115,8 @@ export default function ChatbotScreen({ navigation }, props) {
   }
 
   const createBubble = (messages) => {
+
+    console.log(messages.currentMessage.user)
 
     return (
       <Bubble
@@ -163,10 +164,10 @@ export default function ChatbotScreen({ navigation }, props) {
           <View style={styles.chatBotContainer}>
             <GiftedChat
               messages={messages}
-              user={({
+              user={{
                 _id: id,
                 name: name
-              })}
+              }}
               onSend={(messages) => {Keyboard.dismiss(); setCurrentMessage(messages); setShowEmotions(true);}}
               renderAvatar={(messages) => createAvatar(messages)}
               showUserAvatar={true}
@@ -178,16 +179,19 @@ export default function ChatbotScreen({ navigation }, props) {
             <Modal transparent={true} visible={showEmotions}>
               <View style={{backgroundColor:"#000000aa", flex:1}}>
                 <View style={styles.emotionPopUp}>
-                  <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(0)}><Image style={styles.buttonImage} source={emotionImages[0]}/><Text style={styles.buttonText}>Happy</Text></TouchableOpacity>
-                  <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(1)}><Image style={styles.buttonImage} source={emotionImages[1]}/><Text style={styles.buttonText}>Sad</Text></TouchableOpacity>
-                  <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(2)}><Image style={styles.buttonImage} source={emotionImages[2]}/><Text style={styles.buttonText}>Angry</Text></TouchableOpacity>
-                  <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(3)}><Image style={styles.buttonImage} source={emotionImages[3]}/><Text style={styles.buttonText}>Crying</Text></TouchableOpacity>
-                  <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(4)}><Image style={styles.buttonImage} source={emotionImages[4]}/><Text style={styles.buttonText}>Laughing</Text></TouchableOpacity>
-                  <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(5)}><Image style={styles.buttonImage} source={emotionImages[5]}/><Text style={styles.buttonText}>Nervous</Text></TouchableOpacity>
-                  <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(6)}><Image style={styles.buttonImage} source={emotionImages[6]}/><Text style={styles.buttonText}>Surprised</Text></TouchableOpacity>
-                  <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(7)}><Image style={styles.buttonImage} source={emotionImages[7]}/><Text style={styles.buttonText}>Confused</Text></TouchableOpacity>
-                  <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(8)}><Image style={styles.buttonImage} source={emotionImages[8]}/><Text style={styles.buttonText}>Tired</Text></TouchableOpacity>
-                  <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(9)}><Text style={styles.buttonText}>None</Text></TouchableOpacity>
+                  <Text style={{textAlign: 'center'}}>Select an emotion for your message</Text>
+                  <View style={styles.emotionContainer}>
+                    <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(0)}><Image style={styles.buttonImage} source={emotionImages[0]}/><Text style={styles.buttonText}>Happy</Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(1)}><Image style={styles.buttonImage} source={emotionImages[1]}/><Text style={styles.buttonText}>Sad</Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(2)}><Image style={styles.buttonImage} source={emotionImages[2]}/><Text style={styles.buttonText}>Angry</Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(3)}><Image style={styles.buttonImage} source={emotionImages[3]}/><Text style={styles.buttonText}>Crying</Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(4)}><Image style={styles.buttonImage} source={emotionImages[4]}/><Text style={styles.buttonText}>Laughing</Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(5)}><Image style={styles.buttonImage} source={emotionImages[5]}/><Text style={styles.buttonText}>Nervous</Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(6)}><Image style={styles.buttonImage} source={emotionImages[6]}/><Text style={styles.buttonText}>Surprised</Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(7)}><Image style={styles.buttonImage} source={emotionImages[7]}/><Text style={styles.buttonText}>Confused</Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(8)}><Image style={styles.buttonImage} source={emotionImages[8]}/><Text style={styles.buttonText}>Tired</Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(9)}><Text style={styles.buttonText}>None</Text></TouchableOpacity>
+                  </View>
                 </View>
               </View>
             </Modal>
@@ -201,26 +205,23 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#E5E5E5',
   },
-  emotionChoiceView: {
-    flex:1,
-  },
-  emotionChoiceImage: {
-    flex: 1,
-    resizeMode: 'contain'
-  },
-  emotionChoiceFragment: {
-    backgroundColor: '#DEE0E3'
-  },
   emotionPopUp: {
     backgroundColor: "#ffffff",
-    margin: 10,
-    borderRadius: 10,
     flex: 1,
     display: 'flex',
     flexWrap: 'wrap',
     alignContent: 'center',
     justifyContent: 'center',
-    flexDirection: 'row'
+  },
+  emotionContainer: {
+    marginTop: 10,
+    marginBottom: 10,
+    borderRadius: 10,
+    display: 'flex',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignContent: 'center',
+    justifyContent: 'center'
   },
   emotionButton: {
     marginVertical: 10,
@@ -230,7 +231,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f8ff',
     justifyContent: 'center',
     alignItems: 'center',
-    minWidth: "35%"
+    minWidth: "35%",
+    height: 100
   },
   buttonText: {
     textAlign: 'center',
@@ -239,8 +241,7 @@ const styles = StyleSheet.create({
     margin: 5
   },
   buttonImage: {
-    width: 75,
-    height: 75,
-    alignItems: 'center'
+    width: 50,
+    height: 50,
   }
 });
