@@ -19,6 +19,8 @@
     "expo": "~41.0.1",
     "expo-status-bar": "~1.0.4",
     "firebase": "^8.2.3",
+    "modal": "^1.2.0",
+    "modal-react-native-web": "^0.2.0",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-firebase-hooks": "^3.0.4",

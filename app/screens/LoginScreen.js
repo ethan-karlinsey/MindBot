@@ -27,7 +27,7 @@ export default function LoginScreen({navigation}) {
     return (
         <ImageBackground 
             style={styles.container}
-            source={require("../assets/background.jpg")} 
+            source={require("../assets/backgrounds/1.jpg")} 
             blurRadius={5} >
             <KeyboardAwareScrollView
                 style={{ flex: 1, width: '100%' }}
@@ -39,6 +39,7 @@ export default function LoginScreen({navigation}) {
                 <TextInput
                     style={styles.input}
                     placeholder='E-mail'
+                    keyboardType='email-address'
                     placeholderTextColor="#aaaaaa"
                     onChangeText={(text) => setEmail(text)}
                     value={email}

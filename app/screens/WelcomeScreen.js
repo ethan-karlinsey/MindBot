@@ -5,7 +5,7 @@ export default function WelcomeScreen({ navigation }) {
     return (
         <ImageBackground 
             style={styles.background}
-            source={require("../assets/background.jpg")} >
+            source={require("../assets/backgrounds/1.jpg")} >
             <View style={styles.logoContainer}>
                 <Image source={require("../assets/logo.png")} style={styles.logo}/>
                 <Text style={styles.logoText} >MIND BOT</Text>

@@ -1,26 +1,42 @@
-import React, { useState, useContext, useEffect, Fragment } from 'react';
+import React, { useState, useContext, useLayoutEffect } from 'react';
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
-import { StyleSheet, View, Image, Text, Keyboard } from 'react-native';
-import { Avatar, ButtonGroup } from "react-native-elements";
-import { firebase } from '../firebase/config'
+import { StyleSheet, View, Image, Text, Keyboard, TouchableOpacity } from 'react-native';
+import { Avatar } from "react-native-elements";
+import firebase from 'firebase';
 import 'firebase/firestore';
-import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 import { createNavigatorFactory } from '@react-navigation/core';
+import Modal from './Modal.js';
 import { AuthContext } from '../navigation/AuthProvider';
+import { Platform } from 'react-native';
 
-const emotionImages = [
-  require('../assets/emotions/happy.png'),
-  require('../assets/emotions/sad.png'),
-  require('../assets/emotions/angry.png'),
-  require('../assets/emotions/crying.png'),
-  require('../assets/emotions/laugh.png'),
-  require('../assets/emotions/nervous.png'),
-  require('../assets/emotions/surprised.png'),
-  require('../assets/emotions/confused.png'),
-  require('../assets/emotions/tired.png'),
-];
+let emotionImages;
 
+if (Platform.OS === 'web') {
+  emotionImages = [
+    require('../assets/emotions/happy.png'),
+    require('../assets/emotions/sad.png'),
+    require('../assets/emotions/angry.png'),
+    require('../assets/emotions/crying.png'),
+    require('../assets/emotions/laugh.png'),
+    require('../assets/emotions/nervous.png'),
+    require('../assets/emotions/surprised.png'),
+    require('../assets/emotions/confused.png'),
+    require('../assets/emotions/tired.png'),
+  ];
+} else {
+  emotionImages = [
+    require('../assets/emotions/happy.png'),
+    require('../assets/emotions/sad.png'),
+    require('../assets/emotions/angry.png'),
+    require('../assets/emotions/crying.png'),
+    require('../assets/emotions/laugh.png'),
+    require('../assets/emotions/nervous.png'),
+    require('../assets/emotions/surprised.png'),
+    require('../assets/emotions/confused.png'),
+    require('../assets/emotions/tired.png'),
+  ];
+}
 
 const emotions = ['Happy', 'Sad', 'Angry', 'Crying', 'Laughing', 'Nervous', 'Surprised', 'Confused', 'Tired', 'None'];
 
@@ -35,7 +51,8 @@ export default function ChatbotScreen({ navigation }, props) {
   const [messages] = useCollectionData(query, { idField: 'id' });
   const [id, setId] = useState('');
   const [name, setName] = useState('');
-  useEffect(() => {
+
+  useLayoutEffect(() => {
         let isMounted = true;
         async function getUserInfo() {
             try {
@@ -61,7 +78,6 @@ export default function ChatbotScreen({ navigation }, props) {
         getUserInfo();
         return () => { isMounted = false }
     })
-  //const user = useAuthState(auth);
 
   const sendMessage = (index) => {
 
@@ -71,10 +87,10 @@ export default function ChatbotScreen({ navigation }, props) {
       createdAt: Date.parse(currentMessage[0].createdAt),
       emotionIndex: index,
       emotion: emotions[index],
-      user: ({
+      user: {
         _id: id,
         name: name
-      })
+      }
     })
     setCurrentMessage(null);
   }
@@ -99,6 +115,8 @@ export default function ChatbotScreen({ navigation }, props) {
   }
 
   const createBubble = (messages) => {
+
+    console.log(messages.currentMessage.user)
 
     return (
       <Bubble
@@ -136,42 +154,6 @@ export default function ChatbotScreen({ navigation }, props) {
     )
   }
 
-  const emotionChoice0 = () => <View style={styles.emotionChoiceView}><Image style={styles.emotionChoiceImage} source={emotionImages[0]}/><Text>Happy</Text></View>
-  const emotionChoice1 = () => <View style={styles.emotionChoiceView}><Image style={styles.emotionChoiceImage} source={emotionImages[1]}/><Text>Sad</Text></View>
-  const emotionChoice2 = () => <View style={styles.emotionChoiceView}><Image style={styles.emotionChoiceImage} source={emotionImages[2]}/><Text>Angry</Text></View>
-  const emotionChoice3 = () => <View style={styles.emotionChoiceView}><Image style={styles.emotionChoiceImage} source={emotionImages[3]}/><Text>Crying</Text></View>
-  const emotionChoice4 = () => <View style={styles.emotionChoiceView}><Image style={styles.emotionChoiceImage} source={emotionImages[4]}/><Text>Laughing</Text></View>
-  const emotionChoice5 = () => <View style={styles.emotionChoiceView}><Image style={styles.emotionChoiceImage} source={emotionImages[5]}/><Text>Nervous</Text></View>
-  const emotionChoice6 = () => <View style={styles.emotionChoiceView}><Image style={styles.emotionChoiceImage} source={emotionImages[6]}/><Text>Surprised</Text></View>
-  const emotionChoice7 = () => <View style={styles.emotionChoiceView}><Image style={styles.emotionChoiceImage} source={emotionImages[7]}/><Text>Confused</Text></View>
-  const emotionChoice8 = () => <View style={styles.emotionChoiceView}><Image style={styles.emotionChoiceImage} source={emotionImages[8]}/><Text>Tired</Text></View>
-  const emotionChoice9 = () => <Text>None</Text>
-
-  const renderEmotionChoices = () => {
-
-    if (showEmotions == true) {
-      return(
-        <Fragment>
-          <Text style={{textAlign:'center'}}>Select an emotion for your message</Text>
-          <ButtonGroup
-            buttons={[{element: emotionChoice0}, {element: emotionChoice1}, {element: emotionChoice2}, {element: emotionChoice3}, {element: emotionChoice4}]}
-            selectedIndex={null}
-            onPress={(index) => getEmotion(index)}
-            containerStyle={{height: '10%'}}
-            textStyle={{color: 'black', textAlign:'center'}}
-          />
-          <ButtonGroup
-            buttons={[{element: emotionChoice5}, {element: emotionChoice6}, {element: emotionChoice7}, {element: emotionChoice8}, {element: emotionChoice9}]}
-            selectedIndex={null}
-            onPress={(index) => getEmotion(index + Math.round((emotionImages.length + 1) / 2))}
-            containerStyle={{height: '10%'}}
-            textStyle={{color: 'black', textAlign:'center'}}
-          />
-        </Fragment>
-      )
-    }
-  }
-
   const getEmotion = (index) => {
 
     setShowEmotions(false);
@@ -182,7 +164,10 @@ export default function ChatbotScreen({ navigation }, props) {
           <View style={styles.chatBotContainer}>
             <GiftedChat
               messages={messages}
-              user={user}
+              user={{
+                _id: id,
+                name: name
+              }}
               onSend={(messages) => {Keyboard.dismiss(); setCurrentMessage(messages); setShowEmotions(true);}}
               renderAvatar={(messages) => createAvatar(messages)}
               showUserAvatar={true}
@@ -191,10 +176,27 @@ export default function ChatbotScreen({ navigation }, props) {
               renderBubble={(messages) => createBubble(messages)}
               alwaysShowSend={true}
             />
-            {renderEmotionChoices()}
+            <Modal transparent={true} visible={showEmotions}>
+              <View style={{backgroundColor:"#000000aa", flex:1}}>
+                <View style={styles.emotionPopUp}>
+                  <Text style={{textAlign: 'center'}}>Select an emotion for your message</Text>
+                  <View style={styles.emotionContainer}>
+                    <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(0)}><Image style={styles.buttonImage} source={emotionImages[0]}/><Text style={styles.buttonText}>Happy</Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(1)}><Image style={styles.buttonImage} source={emotionImages[1]}/><Text style={styles.buttonText}>Sad</Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(2)}><Image style={styles.buttonImage} source={emotionImages[2]}/><Text style={styles.buttonText}>Angry</Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(3)}><Image style={styles.buttonImage} source={emotionImages[3]}/><Text style={styles.buttonText}>Crying</Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(4)}><Image style={styles.buttonImage} source={emotionImages[4]}/><Text style={styles.buttonText}>Laughing</Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(5)}><Image style={styles.buttonImage} source={emotionImages[5]}/><Text style={styles.buttonText}>Nervous</Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(6)}><Image style={styles.buttonImage} source={emotionImages[6]}/><Text style={styles.buttonText}>Surprised</Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(7)}><Image style={styles.buttonImage} source={emotionImages[7]}/><Text style={styles.buttonText}>Confused</Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(8)}><Image style={styles.buttonImage} source={emotionImages[8]}/><Text style={styles.buttonText}>Tired</Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(9)}><Text style={styles.buttonText}>None</Text></TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+            </Modal>
           </View>
         )
-  
 };
 
 const styles = StyleSheet.create({
@@ -203,16 +205,43 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#E5E5E5',
   },
-  emotionChoiceView: {
-    flex:1,
-    alignItems:'center',
-    justifyContent:'center'
-  },
-  emotionChoiceImage: {
+  emotionPopUp: {
+    backgroundColor: "#ffffff",
     flex: 1,
-    resizeMode: 'contain'
+    display: 'flex',
+    flexWrap: 'wrap',
+    alignContent: 'center',
+    justifyContent: 'center',
   },
-  emotionChoiceFragment: {
-    backgroundColor: '#DEE0E3'
+  emotionContainer: {
+    marginTop: 10,
+    marginBottom: 10,
+    borderRadius: 10,
+    display: 'flex',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignContent: 'center',
+    justifyContent: 'center'
+  },
+  emotionButton: {
+    marginVertical: 10,
+    marginHorizontal: 10,
+    borderRadius: 10,
+    padding: 10,
+    backgroundColor: '#f0f8ff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    minWidth: "35%",
+    height: 100
+  },
+  buttonText: {
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fontSize: 14,
+    margin: 5
+  },
+  buttonImage: {
+    width: 50,
+    height: 50,
   }
 });

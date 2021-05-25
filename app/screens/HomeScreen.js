@@ -4,18 +4,14 @@ import { firebase } from '../firebase/config';
 import { AuthContext } from '../navigation/AuthProvider';
 
 export default function HomeScreen({ navigation }) {
-    const { user, logout } = useContext(AuthContext);
+    const { user } = useContext(AuthContext);
     const [name, setName] = useState('');
-
-    const onLogOutPress = () => {
-        logout();
-    }
 
     useEffect(() => {
         let isMounted = true;
         async function getUserInfo() {
             try {
-                let doc = await firebase
+                const doc = await firebase
                     .firestore()
                     .collection('users')
                     .doc(user.uid)
@@ -24,7 +20,7 @@ export default function HomeScreen({ navigation }) {
                 if (!doc.exists) {
                     console.log('User data not found');
                 } else {
-                    let data = doc.data();
+                    const data = doc.data();
                     if (isMounted) setName(data.name);
                 }
             } catch (error) {
@@ -37,7 +33,7 @@ export default function HomeScreen({ navigation }) {
 
     return (
         <ImageBackground 
-            source={require("../assets/background.jpg")}
+            source={require("../assets/backgrounds/1.jpg")}
             blurRadius={1.25}
             style={styles.container}>
             <Text style={styles.greeting}>Hello {name}</Text>
@@ -57,9 +53,9 @@ export default function HomeScreen({ navigation }) {
                 <Text style={styles.buttonText}>Instant</Text>
             </TouchableOpacity>
             <TouchableOpacity 
-                style={styles.logOutButton}
-                onPress={onLogOutPress} >
-                <Text style={styles.buttonText}>Log Out</Text>
+                style={styles.button}
+                onPress={() => navigation.navigate('Settings')} >
+                <Text style={styles.buttonText}>Settings</Text>
             </TouchableOpacity>
         </ImageBackground>
     );
@@ -75,28 +71,16 @@ const styles = StyleSheet.create({
         fontSize: 22,
         fontWeight: 'bold',
         color: '#383838',
-        marginTop: 100,
         marginBottom: 30,
     },
     button: {
-        width: "75%",
-        height: 75,
+        width: 300,
+        height: 50,
         backgroundColor: '#788eec',
         marginLeft: 30,
         marginRight: 30,
         marginTop: 25,
-        marginBottom: 25,
-        borderRadius: 5,
-        alignItems: "center",
-        justifyContent: 'center'
-    },
-    logOutButton: {
-        width: "55%",
-        height: 50,
-        backgroundColor: '#ff7269',
-        marginLeft: 30,
-        marginRight: 30,
-        marginTop: 100,
+        marginBottom: 10,
         borderRadius: 5,
         alignItems: "center",
         justifyContent: 'center'

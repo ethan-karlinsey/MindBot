@@ -36,7 +36,7 @@ export default function RegistrationScreen({navigation}) {
     return (
         <ImageBackground 
             style={styles.container}
-            source={require("../assets/background.jpg")} 
+            source={require("../assets/backgrounds/1.jpg")} 
             blurRadius={5}  >
             <KeyboardAwareScrollView
                 style={{ flex: 1, width: '100%' }}
@@ -56,6 +56,7 @@ export default function RegistrationScreen({navigation}) {
                 />
                 <TextInput
                     style={styles.input}
+                    keyboardType='email-address'
                     placeholder='E-mail'
                     placeholderTextColor="#aaaaaa"
                     onChangeText={(text) => setEmail(text)}
