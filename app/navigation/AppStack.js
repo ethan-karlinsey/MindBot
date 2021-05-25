@@ -9,7 +9,7 @@ export default function AppStack() {
     return (
         <Stack.Navigator screenOptions={{ headerShown: false }} >
             <Stack.Screen name='Home' component={HomeScreen} />
-            <Stack.Screen name='Chatbot' component={ChatbotScreen} />
+            <Stack.Screen name='Chatbot' component={ChatbotScreen} options={{ headerShown: true }}/>
         </Stack.Navigator>
     );
 }
