@@ -1,11 +1,11 @@
 {
   "files": {
-    "app.js": "/MindBot/static/js/app.c90a55ee.chunk.js",
-    "app.js.map": "/MindBot/static/js/app.c90a55ee.chunk.js.map",
+    "app.js": "/MindBot/static/js/app.ae556ca2.chunk.js",
+    "app.js.map": "/MindBot/static/js/app.ae556ca2.chunk.js.map",
     "runtime~app.js": "/MindBot/static/js/runtime~app.6b8f1cb1.js",
     "runtime~app.js.map": "/MindBot/static/js/runtime~app.6b8f1cb1.js.map",
-    "static/js/2.5271c9e7.chunk.js": "/MindBot/static/js/2.5271c9e7.chunk.js",
-    "static/js/2.5271c9e7.chunk.js.map": "/MindBot/static/js/2.5271c9e7.chunk.js.map",
+    "static/js/2.37bc9c16.chunk.js": "/MindBot/static/js/2.37bc9c16.chunk.js",
+    "static/js/2.37bc9c16.chunk.js.map": "/MindBot/static/js/2.37bc9c16.chunk.js.map",
     "fonts/AntDesign.ttf": "/MindBot/./fonts/AntDesign.ttf",
     "fonts/Entypo.ttf": "/MindBot/./fonts/Entypo.ttf",
     "fonts/Feather.ttf": "/MindBot/./fonts/Feather.ttf",
@@ -24,7 +24,7 @@
     "index.html": "/MindBot/index.html",
     "manifest.json": "/MindBot/manifest.json",
     "serve.json": "/MindBot/serve.json",
-    "static/js/2.5271c9e7.chunk.js.LICENSE.txt": "/MindBot/static/js/2.5271c9e7.chunk.js.LICENSE.txt",
+    "static/js/2.37bc9c16.chunk.js.LICENSE.txt": "/MindBot/static/js/2.37bc9c16.chunk.js.LICENSE.txt",
     "static/media/angry.png": "/MindBot/static/media/angry.d77d9f67.png",
     "static/media/background.jpg": "/MindBot/static/media/background.afe8d931.jpg",
     "static/media/bell.png": "/MindBot/static/media/bell.cf04af27.png",
@@ -43,7 +43,7 @@
   },
   "entrypoints": [
     "static/js/runtime~app.6b8f1cb1.js",
-    "static/js/2.5271c9e7.chunk.js",
-    "static/js/app.c90a55ee.chunk.js"
+    "static/js/2.37bc9c16.chunk.js",
+    "static/js/app.ae556ca2.chunk.js"
   ]
 }
