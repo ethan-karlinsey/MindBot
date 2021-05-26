@@ -36,7 +36,7 @@ export default function RegistrationScreen({navigation}) {
     return (
         <ImageBackground 
             style={styles.container}
-            source={require("../assets/background.jpg")} 
+            source={require("../assets/backgrounds/1.jpg")} 
             blurRadius={5}  >
             <KeyboardAwareScrollView
                 style={{ flex: 1, width: '100%' }}
@@ -45,49 +45,51 @@ export default function RegistrationScreen({navigation}) {
                     style={styles.logo}
                     source={require('../assets/logo.png')}
                 />
-                <TextInput
-                    style={styles.input}
-                    placeholder='Name'
-                    placeholderTextColor="#aaaaaa"
-                    onChangeText={(text) => setName(text)}
-                    value={name}
-                    underlineColorAndroid="transparent"
-                    autoCapitalize="none"
-                />
-                <TextInput
-                    style={styles.input}
-                    placeholder='E-mail'
-                    placeholderTextColor="#aaaaaa"
-                    onChangeText={(text) => setEmail(text)}
-                    value={email}
-                    underlineColorAndroid="transparent"
-                    autoCapitalize="none"
-                />
-                <TextInput
-                    style={styles.input}
-                    placeholderTextColor="#aaaaaa"
-                    secureTextEntry
-                    placeholder='Password (At least 6 characters)'
-                    onChangeText={(text) => setPassword(text)}
-                    value={password}
-                    underlineColorAndroid="transparent"
-                    autoCapitalize="none"
-                />
-                <TextInput
-                    style={styles.input}
-                    placeholderTextColor="#aaaaaa"
-                    secureTextEntry
-                    placeholder='Confirm Password (At least 6 characters)'
-                    onChangeText={(text) => setConfirmPassword(text)}
-                    value={confirmPassword}
-                    underlineColorAndroid="transparent"
-                    autoCapitalize="none"
-                />
-                <TouchableOpacity
-                    style={styles.button}
-                    onPress={() => onRegisterPress()}>
-                    <Text style={styles.buttonTitle}>Create account</Text>
-                </TouchableOpacity>
+                <View style={styles.container}>
+                    <TextInput
+                        style={styles.input}
+                        placeholder='Name'
+                        placeholderTextColor="#aaaaaa"
+                        onChangeText={(text) => setName(text)}
+                        value={name}
+                        underlineColorAndroid="transparent"
+                        autoCapitalize="none"
+                    />
+                    <TextInput
+                        style={styles.input}
+                        placeholder='E-mail'
+                        placeholderTextColor="#aaaaaa"
+                        onChangeText={(text) => setEmail(text)}
+                        value={email}
+                        underlineColorAndroid="transparent"
+                        autoCapitalize="none"
+                    />
+                    <TextInput
+                        style={styles.input}
+                        placeholderTextColor="#aaaaaa"
+                        secureTextEntry
+                        placeholder='Password (At least 6 characters)'
+                        onChangeText={(text) => setPassword(text)}
+                        value={password}
+                        underlineColorAndroid="transparent"
+                        autoCapitalize="none"
+                    />
+                    <TextInput
+                        style={styles.input}
+                        placeholderTextColor="#aaaaaa"
+                        secureTextEntry
+                        placeholder='Confirm Password (At least 6 characters)'
+                        onChangeText={(text) => setConfirmPassword(text)}
+                        value={confirmPassword}
+                        underlineColorAndroid="transparent"
+                        autoCapitalize="none"
+                    />
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={() => onRegisterPress()}>
+                        <Text style={styles.buttonTitle}>Create account</Text>
+                    </TouchableOpacity>
+                </View>
                 <View style={styles.footerView}>
                     <Text style={styles.footerText}>Already got an account? <Text onPress={onFooterLinkPress} style={styles.footerLink}>Log in</Text></Text>
                 </View>
@@ -99,10 +101,8 @@ export default function RegistrationScreen({navigation}) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        alignItems: 'center'
-    },
-    title: {
-
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     logo: {
         flex: 1,
@@ -112,6 +112,7 @@ const styles = StyleSheet.create({
         margin: 30
     },
     input: {
+        width: 320,
         height: 48,
         borderRadius: 5,
         overflow: 'hidden',
@@ -128,6 +129,7 @@ const styles = StyleSheet.create({
         marginLeft: 30,
         marginRight: 30,
         marginTop: 20,
+        width: 320,
         height: 48,
         borderRadius: 5,
         alignItems: "center",
