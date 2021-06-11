@@ -14,8 +14,8 @@ export default function AppStack() {
             <Stack.Screen name='Home' component={HomeScreen} options={{ headerShown: false}} />
             <Stack.Screen name='Chatbot' component={ChatbotScreen} />
             <Stack.Screen name='Settings' component={SettingsScreen} />
-            <Stack.Screen name='UpdatePassword' component={UpdatePassword} />
-            <Stack.Screen name='UpdateEmail' component={UpdateEmail} />
+            <Stack.Screen name='Update Password' component={UpdatePassword} />
+            <Stack.Screen name='Update Email' component={UpdateEmail} />
         </Stack.Navigator>
     );
 }

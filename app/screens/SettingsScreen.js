@@ -24,12 +24,12 @@ export default function SettingsScreen({ navigation }) {
             blurRadius={5} >
                 <TouchableOpacity
                     style={styles.button}
-                    onPress={() => navigation.navigate('UpdatePassword')}>
+                    onPress={() => navigation.navigate('Update Password')}>
                     <Text style={styles.buttonText}>Change Password</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={styles.button}
-                    onPress={() => navigation.navigate('UpdateEmail')}>
+                    onPress={() => navigation.navigate('Update Email')}>
                     <Text style={styles.buttonText}>Change Email</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
