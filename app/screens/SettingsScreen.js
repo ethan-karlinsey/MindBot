@@ -20,7 +20,7 @@ export default function SettingsScreen({ navigation }) {
     return (
         <ImageBackground 
             style={styles.container}
-            source={require("../assets/backgrounds/1.jpg")} 
+            source={require("../assets/backgrounds/settings2.jpg")} 
             blurRadius={5} >
                 <TouchableOpacity
                     style={styles.button}
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     button: {
         width: 300,
         height: 50,
-        backgroundColor: '#788eec',
+        backgroundColor: '#c49595',
         marginLeft: 30,
         marginRight: 30,
         marginTop: 25,

@@ -1,21 +1,48 @@
 import * as React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import HomeScreen from '../screens/HomeScreen';
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ChatbotScreen from '../screens/ChatbotScreen';
-import SettingsScreen from '../screens/SettingsScreen';
-import UpdatePassword from '../screens/UpdatePassword';
-import UpdateEmail from '../screens/UpdateEmail';
+import SettingsStack from './SettingsStack';
+import MindfulnessStack from './MindfulnessStack';
 
 const Stack = createStackNavigator();
+const Tab = createMaterialBottomTabNavigator();
 
 export default function AppStack() {
     return (
-        <Stack.Navigator screenOptions={{ headerShown: true, headerTitleAlign: 'center' }} >
-            <Stack.Screen name='Home' component={HomeScreen} options={{ headerShown: false}} />
-            <Stack.Screen name='Chatbot' component={ChatbotScreen} />
-            <Stack.Screen name='Settings' component={SettingsScreen} />
-            <Stack.Screen name='Update Password' component={UpdatePassword} />
-            <Stack.Screen name='Update Email' component={UpdateEmail} />
-        </Stack.Navigator>
+        <Tab.Navigator 
+            initialRouteName='Mindfulness'
+            barStyle={{ backgroundColor: '#545454' }}
+            screenOptions={{ headerShown: true, headerTitleAlign: 'center' }} 
+        >
+            <Tab.Screen 
+                name='Settings' 
+                component={SettingsStack} 
+                options={{ 
+                    tabBarIcon: ({ color }) => (
+                        <MaterialCommunityIcons name="cog" color={color} size={26} />
+                    ),
+                }} 
+            />
+            <Tab.Screen 
+                name='Mindfulness' 
+                component={MindfulnessStack} 
+                options={{ 
+                    tabBarIcon: ({ color }) => (
+                        <MaterialCommunityIcons name="brain" color={color} size={26} />
+                    ),
+                }} 
+            />
+            <Tab.Screen 
+                name='Chatbot' 
+                component={ChatbotScreen} 
+                options={{ 
+                    tabBarIcon: ({ color }) => (
+                        <MaterialCommunityIcons name="chat" color={color} size={26} />
+                    ),
+                }} 
+            />
+        </Tab.Navigator>
     );
 }
