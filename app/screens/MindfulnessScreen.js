@@ -10,7 +10,7 @@ export default function HomeScreen({ navigation }) {
             blurRadius={1.5}
             style={styles.container}>
             <View style={{ alignItems: 'center'}} >
-                <Text style={styles.greeting}>TAKE A DEEP BREATH AND LET'S DO THIS</Text>
+                <Text style={styles.greeting}>Take a deep breath and let's do this!</Text>
                 <Image source={require("../assets/meditation.png")} style={styles.image}/>
             </View>
             <TouchableHighlight 
@@ -47,10 +47,11 @@ const styles = StyleSheet.create({
         justifyContent: "center",
     },
     greeting: {
-        fontSize: 18,
+        fontSize: 20,
         fontWeight: 'bold',
+        fontStyle: 'italic',
         fontFamily: 'sans-serif-medium',
-        color: '#383838',
+        color: '#5b5b5b',
         marginBottom: 15,
     },
     guidedButton: {

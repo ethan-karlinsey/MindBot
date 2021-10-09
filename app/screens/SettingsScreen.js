@@ -35,7 +35,16 @@ export default function SettingsScreen({ navigation }) {
                 <TouchableOpacity
                     style={styles.button}
                     onPress={() => onLogOutPress()}>
+                    <Text style={styles.buttonText}>Chatbot Settings</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => onLogOutPress()}>
                     <Text style={styles.buttonText}>Log Out</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={styles.button} >
+                    <Text style={styles.buttonText}>Delete Account</Text>
                 </TouchableOpacity>
         </ImageBackground>
     )
@@ -50,7 +59,7 @@ const styles = StyleSheet.create({
     button: {
         width: 300,
         height: 50,
-        backgroundColor: '#c49595',
+        backgroundColor: '#796a8a',
         marginLeft: 30,
         marginRight: 30,
         marginTop: 25,

@@ -44,7 +44,7 @@ export default function UpdateEmail({ navigation }) {
     return (
         <ImageBackground 
             style={styles.container}
-            source={require("../assets/backgrounds/1.jpg")} 
+            source={require("../assets/backgrounds/settings2.jpg")} 
             blurRadius={5} >
             <View>
                 <TextInput
@@ -61,7 +61,7 @@ export default function UpdateEmail({ navigation }) {
                     style={styles.input}
                     placeholderTextColor="#aaaaaa"
                     keyboardType='email-address'
-                    placeholder='Confirm New Email'
+                    placeholder='Confirm Email'
                     onChangeText={(text) => setConfirmNewEmail(text)}
                     value={confirmNewEmail}
                     underlineColorAndroid="transparent"
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
         paddingLeft: 16
     },
     button: {
-        backgroundColor: '#788eec',
+        backgroundColor: '#796a8a',
         marginLeft: 30,
         marginRight: 30,
         marginTop: 20,

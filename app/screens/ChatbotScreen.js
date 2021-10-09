@@ -1,19 +1,14 @@
 import React, { useState, useContext, useLayoutEffect } from 'react';
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
-import { StyleSheet, View, Image, Text, Keyboard, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Image, Text, Keyboard, TouchableOpacity, Button } from 'react-native';
 import { Avatar } from "react-native-elements";
 import firebase from 'firebase';
 import 'firebase/firestore';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
-import { createNavigatorFactory } from '@react-navigation/core';
 import Modal from './Modal.js';
 import { AuthContext } from '../navigation/AuthProvider';
-import { Platform } from 'react-native';
 
-let emotionImages;
-
-if (Platform.OS === 'web') {
-  emotionImages = [
+let emotionImages = [
     require('../assets/emotions/happy.png'),
     require('../assets/emotions/sad.png'),
     require('../assets/emotions/angry.png'),
@@ -24,19 +19,25 @@ if (Platform.OS === 'web') {
     require('../assets/emotions/confused.png'),
     require('../assets/emotions/tired.png'),
   ];
-} else {
-  emotionImages = [
-    require('../assets/emotions/happy.png'),
-    require('../assets/emotions/sad.png'),
-    require('../assets/emotions/angry.png'),
-    require('../assets/emotions/crying.png'),
-    require('../assets/emotions/laugh.png'),
-    require('../assets/emotions/nervous.png'),
-    require('../assets/emotions/surprised.png'),
-    require('../assets/emotions/confused.png'),
-    require('../assets/emotions/tired.png'),
-  ];
-}
+
+const letsChatMessages = [
+  "How are you doing today?",
+  "Hey, how's it going?",
+  "How are you feeling?",
+  "How was your day?",
+  "How have you been?",
+  "What have you been up to?",
+  "How's everyting going?",
+  "What’s new with you?",
+];
+
+const kindMessages = [
+  "You are loved and appreciated",
+  "You are amazing just the way you are",
+  "You can acomplish anything you put your mind to",
+  "You are braver than you believe, stronger than you seem, and smarter than you think",
+  "You are great",
+];
 
 const emotions = ['Happy', 'Sad', 'Angry', 'Crying', 'Laughing', 'Nervous', 'Surprised', 'Confused', 'Tired', 'None'];
 
@@ -97,6 +98,7 @@ export default function ChatbotScreen({ navigation }, props) {
 
   const createAvatar = (messageInfo) => {
 
+    // If the emotion the user selects is "None"
     if (messageInfo.currentMessage.emotionIndex == emotionImages.length) {
       return null;
 
@@ -115,8 +117,6 @@ export default function ChatbotScreen({ navigation }, props) {
   }
 
   const createBubble = (messages) => {
-
-    console.log(messages.currentMessage.user)
 
     return (
       <Bubble
@@ -160,8 +160,56 @@ export default function ChatbotScreen({ navigation }, props) {
     sendMessage(index);
   }
 
+  const sendLetsChat = () => {
+
+    const randomId = Math.random().toString(36).substring(2);
+
+    chatsRef.add({
+      _id: randomId,
+      text: letsChatMessages[Math.floor(Math.random() * letsChatMessages.length)],
+      createdAt: new Date().getTime(),
+      emotionIndex: 0,
+      emotion: emotions[0],
+      user: {
+        _id: 'NICUiyNjJBRQHccSDjRvZzOi3Pj2',
+        name: 'MindBot'
+      }
+    })
+  }
+
+  const sendKindMessage = () => {
+
+    const randomId = Math.random().toString(36).substring(2);
+
+    chatsRef.add({
+      _id: randomId,
+      text: kindMessages[Math.floor(Math.random() * kindMessages.length)],
+      createdAt: new Date().getTime(),
+      emotionIndex: 0,
+      emotion: emotions[0],
+      user: {
+        _id: 'NICUiyNjJBRQHccSDjRvZzOi3Pj2',
+        name: 'MindBot'
+      }
+    })
+  }
+
   return (
           <View style={styles.chatBotContainer}>
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => sendLetsChat()}
+              >
+                <Text style={styles.chatButtonText}>Let's Chat</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => sendKindMessage()}
+              >
+                <Text style={styles.chatButtonText}>Send a kind message</Text>
+              </TouchableOpacity>
+            </View>
             <GiftedChat
               messages={messages}
               user={{
@@ -204,6 +252,27 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     backgroundColor: '#E5E5E5',
+  },
+  buttonContainer: {
+    justifyContent: 'center', 
+    flexDirection: "row",
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    backgroundColor: 'white'
+  },
+  button: {
+    width: '42%',
+    height: 50,
+    borderRadius: 20,
+    backgroundColor: "#61dafb",
+    marginBottom: 10,
+    marginTop: 30
+  },
+  chatButtonText: {
+    justifyContent: 'center',
+    textAlign: 'center',
+    fontWeight: 'bold',
+    lineHeight: 50,
   },
   emotionPopUp: {
     backgroundColor: "#ffffff",

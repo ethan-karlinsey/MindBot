@@ -2,7 +2,7 @@ import * as React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import ChatbotScreen from '../screens/ChatbotScreen';
+import ChatbotStack from './ChatbotStack';
 import SettingsStack from './SettingsStack';
 import MindfulnessStack from './MindfulnessStack';
 
@@ -36,7 +36,7 @@ export default function AppStack() {
             />
             <Tab.Screen 
                 name='Chatbot' 
-                component={ChatbotScreen} 
+                component={ChatbotStack} 
                 options={{ 
                     tabBarIcon: ({ color }) => (
                         <MaterialCommunityIcons name="chat" color={color} size={26} />
