@@ -1,6 +1,31 @@
-from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
+from transformers import AutoModelForCausalLM, AutoTokenizer
 import torch
+import pyrebase
 
+# ------------------------- AUTH SETUP -----------------------------------
+
+config = {
+  "apiKey": "AIzaSyBLo3MIDiCutOt63VqJNkEMgLbI71gxBDE",
+  "authDomain": "chatapp-6a550.firebaseapp.com",
+  "databaseURL": "https://chatapp-6a550-default-rtdb.firebaseio.com",
+  "projectId": "chatapp-6a550",
+  "storageBucket": "chatapp-6a550.appspot.com",
+  "messagingSenderId": "432038414833",
+  "appId": "1:432038414833:web:6a8228bf2fd1f997219c50"
+}
+
+firebase = pyrebase.initialize_app(config)
+auth = firebase.auth()
+user = auth.sign_in_with_email_and_password("MindBot@email.com", "123456")
+db = firebase.database()
+
+
+
+
+
+
+
+# ------------------- MAIN CHATBOT LOOP ------------------------------
 
 tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-medium")
 model = AutoModelForCausalLM.from_pretrained("microsoft/DialoGPT-medium")

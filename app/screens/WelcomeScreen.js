@@ -5,7 +5,7 @@ export default function WelcomeScreen({ navigation }) {
     return (
         <ImageBackground 
             style={styles.background}
-            source={require("../assets/backgrounds/1.jpg")} >
+            source={require("../assets/background.jpg")} >
             <View style={styles.logoContainer}>
                 <Image source={require("../assets/logo.png")} style={styles.logo}/>
                 <Text style={styles.logoText} >MIND BOT</Text>
@@ -32,8 +32,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     loginButton: {
-        width: 320,
-        height: 48,
+        width: "80%",
         backgroundColor: '#788eec',
         marginLeft: 30,
         marginRight: 30,
@@ -44,8 +43,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     registerButton: {
-        width: 320,
-        height: 48,
+        width: "80%",
         backgroundColor: '#ffffff',
         marginLeft: 30,
         marginRight: 30,
