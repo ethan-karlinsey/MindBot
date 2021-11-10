@@ -12,12 +12,21 @@ export const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
+    const [theme, setTheme] = useState(null);
+    const [saveMessageHistory, setSaveMessageHistory] = useState(null);
+    const [showEmotions, setShowEmotions] = useState(null);
 
     return (
         <AuthContext.Provider
             value={{
                 user,
                 setUser,
+                theme,
+                setTheme,
+                saveMessageHistory,
+                setSaveMessageHistory,
+                showEmotions,
+                setShowEmotions,
                 login: async (email, password) => {
                     try {
                         await firebase.auth().signInWithEmailAndPassword(email, password);  // sign in
@@ -40,7 +49,16 @@ export const AuthProvider = ({ children }) => {
                             .set({
                                 _id: currentUser.uid,
                                 email: currentUser.email,
-                                name: name
+                                name: name,
+                                saveMessageHistory: true,
+                                showEmotions: true,
+                                theme: {
+                                    background: "#EBEBEB",
+                                    font: "#000000",
+                                    primary: "#FFFFFF",
+                                    secondary: "#8C8C8C",
+                                    tertiary: "#E3E3E3"
+                                }
                         });
                     } catch (error) {
                         Alert.alert('Error', error+"");
@@ -56,7 +74,7 @@ export const AuthProvider = ({ children }) => {
                 deleteAccount: async () => {
                     try {
                         /*
-                            DELETE USER DATA FROM DATABASE HERE
+                            TODO: DELETE USER DATA FROM DATABASE HERE
                         */
                         const currentUser = firebase.auth().currentUser;    // get current user and delete
                         await currentUser.delete();

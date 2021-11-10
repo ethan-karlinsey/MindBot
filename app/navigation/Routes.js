@@ -9,10 +9,33 @@ import LoadingScreen from '../screens/LoadingScreen';
 export default function Routes() {
     const [initializing, setInitializing] = useState(true);
     const [loading, setLoading] = useState(true);
-    const { user, setUser} = useContext(AuthContext);
+    const { user, setUser, setTheme, setSaveMessageHistory, setShowEmotions} = useContext(AuthContext);
 
-    function onAuthStateChanged(result) {            
-        setUser(result);    // set user in authcontext
+   async function onAuthStateChanged(result) {   
+        await setUser(result);    // set user in authcontext
+
+        if (result) {
+            console.log(result);  
+            try {
+                let doc = await firebase
+                    .firestore()
+                    .collection("users")
+                    .doc(result.uid)
+                    .get();
+
+                if (!doc.exists) {
+                    console.log("User data not found");
+                } else {
+                    let data = doc.data();
+                    await setTheme(data.theme);
+                    await setSaveMessageHistory(data.saveMessageHistory);
+                    await setShowEmotions(data.showEmotions);
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
         if (initializing) setInitializing(false);   
         setLoading(false);
     }
@@ -28,7 +51,7 @@ export default function Routes() {
         return <LoadingScreen />
     } 
     
-    // returns main app stack is user is already authenticated
+    // returns main app stack if user is already authenticated
     // returns authentication stack if user is not already authenticated 
     return (
         <NavigationContainer>

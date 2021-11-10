@@ -1,6 +1,8 @@
 import * as React from 'react';
+import { useContext} from 'react';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { AuthContext } from '../navigation/AuthProvider';
 import ChatbotStack from './ChatbotStack';
 import SettingsStack from './SettingsStack';
 import MindfulnessStack from './MindfulnessStack';
@@ -14,11 +16,13 @@ const Tab = createMaterialBottomTabNavigator();
     Settings tab has SettingsStack, mindfulness has MindfulnessStack, chatbot has ChatbotStack
 */
 export default function AppStack() {
+    const { theme } = useContext(AuthContext);
+
     return (
         <Tab.Navigator 
             initialRouteName='Mindfulness'
             tabBarOptions={{ keyboardHidesTabBar: false }} 
-            barStyle={{ backgroundColor: '#545454' }}
+            barStyle={{ backgroundColor: theme.primary }}
             screenOptions={{ headerShown: true, headerTitleAlign: 'center' }} 
         >
             <Tab.Screen 

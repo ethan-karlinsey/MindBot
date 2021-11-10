@@ -1,12 +1,68 @@
 import React, { useContext, useState } from 'react';
-import { ActivityIndicator, StyleSheet, TouchableHighlight, Text, Modal, TextInput, View, Alert, Dimensions, Switch, Pressable } from 'react-native';
+import { ActivityIndicator, StyleSheet, TouchableHighlight, TouchableOpacity, Text, Modal, TextInput, View, Alert, Dimensions, Switch, Pressable, ScrollView } from 'react-native';
+import { Header } from "react-native-elements";
 import { AuthContext } from '../navigation/AuthProvider';
 import { firebase } from '../firebase/config';
 
 const { width } = Dimensions.get("window");
 
+const colorOptions = [
+  "#E4E5D6",
+  "#515155",
+  "#4C78B9",
+  "#60A099",
+  "#F9C633",
+  "#fa5757",
+];
+
+const themes = [
+  { // light
+    background: "#EBEBEB",
+    font: "#000000",
+    primary: "#FFFFFF",
+    secondary: "#8C8C8C",
+    tertiary: "#666666"
+  },
+  { // dark
+    background: "#000000",
+    font: "#FFFFFF",
+    primary: "#383838",
+    secondary: "#8C8C8C",
+    tertiary: "#999999"
+  },
+  { // blue
+    background: "#5c93ff",
+    font: "#FFFFFF",
+    primary: "#82acff",
+    secondary: "#DBDBDB",
+    tertiary: "#E3E3E3"
+  },
+  { // green
+    background: "#2bb52a",
+    font: "#FFFFFF",
+    primary: "#67c466",
+    secondary: "#DBDBDB",
+    tertiary: "#E3E3E3"
+  },
+  { // yellow
+    background: "#f7f174",
+    font: "#000000",
+    primary: "#fffa94",
+    secondary: "#666666",
+    tertiary: "#4f4f4f"
+  },
+  { // red
+    background: "#ff7070",
+    font: "#000000",
+    primary: "#ff9c9c",
+    secondary: "#666666",
+    tertiary: "#4f4f4f"
+  },
+];
+
+
 export default function SettingsScreen({ navigation }) {
-    const { user, logout, deleteAccount } = useContext(AuthContext);
+    const { user, theme, setTheme, saveMessageHistory, setSaveMessageHistory, showEmotions, setShowEmotions, logout, deleteAccount } = useContext(AuthContext);
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
@@ -17,10 +73,41 @@ export default function SettingsScreen({ navigation }) {
     const [isPasswordModalVisible, setPasswordModalVisible] = useState(false);
     const [isEmailModalVisible, setEmailModalVisisble] = useState(false);
     const [isNameModalVisible, setNameModalVisible] = useState(false);
-    const [isEnabled, setIsEnabled] = useState(false);
     const [loading, setLoading] = useState(false);
 
-    const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+    const toggleSaveMessageHistorySwitch = async () => {
+        await setSaveMessageHistory(previousState => !previousState);
+        firebase
+            .firestore()
+            .collection('users')
+            .doc(user.uid)
+            .update({
+                saveMessageHistory: !saveMessageHistory
+            });
+    }
+    const toggleShowEmotionsEnabled = async() => {
+        await setShowEmotions(previousState => !previousState);
+        firebase
+            .firestore()
+            .collection('users')
+            .doc(user.uid)
+            .update({
+                showEmotions: !showEmotions
+            });
+    }
+
+    const updateTheme = async (newTheme) => {
+        await setTheme(newTheme);
+        if (theme != newTheme) {
+            firebase
+                .firestore()
+                .collection('users')
+                .doc(user.uid)
+                .update({
+                    theme: newTheme
+                });
+        }
+    }
 
     const reauthenticate = (password) => {
         var user = firebase.auth().currentUser;
@@ -84,6 +171,14 @@ export default function SettingsScreen({ navigation }) {
         user.updateProfile({
             displayName: name
         }).then(() => {
+            firebase
+                .firestore()
+                .collection('users')
+                .doc(user.uid)
+                .update({
+                    name: name
+                })
+
             Alert.alert('Name Updated');
         }).catch((error) => {
             Alert.alert(error.message);
@@ -167,6 +262,7 @@ export default function SettingsScreen({ navigation }) {
     }
 
     //console.log(user);
+    console.log(theme);
 
     if (loading){
         return (
@@ -180,204 +276,396 @@ export default function SettingsScreen({ navigation }) {
         );
     } else {
         return (
-            <View style={styles.container}>
-                <Text style={styles.headerText}>MY ACCOUNT</Text>
-                <Pressable onPress={() => onNamePress()} style={styles.row}>
-                    <Text style={styles.descriptorText}>Name</Text>
-                    <Text style={styles.valueText}>{user.displayName}</Text>
+            <ScrollView style={styles(theme).container}>
+                <Text style={styles(theme).headerText}>MY ACCOUNT</Text>
+                <Pressable onPress={() => onNamePress()} style={styles(theme).row}>
+                    <Text style={styles(theme).descriptorText}>Name</Text>
+                    <Text style={styles(theme).valueText}>{user.displayName}</Text>
                 </Pressable>
                 <Modal 
                     animationType="none"
                     transparent visible ={isNameModalVisible}
                     presentationStyle="overFullScreen"
                     onDismiss={toggleNameModalVisibility} >
-                    <View style={styles.viewWrapper}>
-                        <View style={styles.deleteModalContainer}>
-                            <Text style={styles.modalTitleText}>Update Name</Text>
+                    <View style={styles(theme).viewWrapper}>
+                        <View style={styles(theme).deleteModalContainer}>
+                            <Text style={styles(theme).modalTitleText}>Update Name</Text>
                             <TextInput 
-                                style={styles.textInput}
+                                style={styles(theme).textInput}
                                 placeholder={user.displayName}
                                 value={name}
                                 onChangeText={(value) => setName(value)}
                             />
-                            <View style={styles.modalButtonContainer}>
+                            <View style={styles(theme).modalButtonContainer}>
                                 <TouchableHighlight 
                                     activeOpacity={0.95}
                                     underlayColor={'#919191'}
                                     onPress={toggleNameModalVisibility} 
-                                    style={styles.modalButton} >
-                                    <Text style={styles.modalButtonText}>CANCEL</Text>
+                                    style={styles(theme).modalButton} >
+                                    <Text style={styles(theme).modalButtonText}>CANCEL</Text>
                                 </TouchableHighlight>
                                 <TouchableHighlight 
                                     activeOpacity={0.95}
                                     underlayColor={'#919191'}
                                     onPress={onConfirmUpdateName} 
-                                    style={styles.modalButton} >
-                                    <Text style={styles.modalButtonText}>CONFIRM</Text>
+                                    style={styles(theme).modalButton} >
+                                    <Text style={styles(theme).modalButtonText}>CONFIRM</Text>
                                 </TouchableHighlight>
                             </View>
                         </View>
                     </View>
                 </Modal>
-                <Pressable onPress={() => onEmailPress()} style={styles.row}>
-                    <Text style={styles.descriptorText}>Email</Text>
-                    <Text style={styles.valueText}>{user.email}</Text>
+                <Pressable onPress={() => onEmailPress()} style={styles(theme).row}>
+                    <Text style={styles(theme).descriptorText}>Email</Text>
+                    <Text style={styles(theme).valueText}>{user.email}</Text>
                 </Pressable>
                 <Modal 
                     animationType="none"
                     transparent visible ={isEmailModalVisible}
                     presentationStyle="overFullScreen"
                     onDismiss={toggleEmailModalVisibility} >
-                    <View style={styles.viewWrapper}>
-                        <View style={styles.passwordModalContainer}>
-                            <Text style={styles.modalTitleText}>Update Email</Text>
+                    <View style={styles(theme).viewWrapper}>
+                        <View style={styles(theme).passwordModalContainer}>
+                            <Text style={styles(theme).modalTitleText}>Update Email</Text>
                             <TextInput 
-                                style={styles.textInput}
+                                style={styles(theme).textInput}
                                 placeholder="New email"
                                 value={newEmail}
                                 onChangeText={(value) => setNewEmail(value)}
                             />
                             <TextInput 
-                                style={styles.textInput}
+                                style={styles(theme).textInput}
                                 placeholder="Confirm email"
                                 value={confirmNewEmail}
                                 onChangeText={(value) => setConfirmNewEmail(value)}
                             />
                             <TextInput 
-                                style={styles.textInput}
+                                style={styles(theme).textInput}
                                 placeholder="Password"
                                 secureTextEntry
                                 value={password}
                                 onChangeText={(value) => setPassword(value)}
                             />
-                            <View style={styles.modalButtonContainer}>
+                            <View style={styles(theme).modalButtonContainer}>
                                 <TouchableHighlight 
                                     activeOpacity={0.95}
                                     underlayColor={'#919191'}
                                     onPress={toggleEmailModalVisibility} 
-                                    style={styles.modalButton} >
-                                    <Text style={styles.modalButtonText}>CANCEL</Text>
+                                    style={styles(theme).modalButton} >
+                                    <Text style={styles(theme).modalButtonText}>CANCEL</Text>
                                 </TouchableHighlight>
                                 <TouchableHighlight 
                                     activeOpacity={0.95}
                                     underlayColor={'#919191'}
                                     onPress={onConfirmUpdateEmail} 
-                                    style={styles.modalButton} >
-                                    <Text style={styles.modalButtonText}>CONFIRM</Text>
+                                    style={styles(theme).modalButton} >
+                                    <Text style={styles(theme).modalButtonText}>CONFIRM</Text>
                                 </TouchableHighlight>
                             </View>
                         </View>
                     </View>
                 </Modal>
-                <Pressable onPress={() => onPasswordPress()} style={styles.row}>
-                    <Text style={styles.descriptorText}>Password</Text>
-                    <Text style={styles.valueText}>********</Text>
+                <Pressable onPress={() => onPasswordPress()} style={styles(theme).row}>
+                    <Text style={styles(theme).descriptorText}>Password</Text>
+                    <Text style={styles(theme).valueText}>********</Text>
                 </Pressable>
                 <Modal 
                     animationType="none"
                     transparent visible ={isPasswordModalVisible}
                     presentationStyle="overFullScreen"
                     onDismiss={togglePasswordModalVisibility} >
-                    <View style={styles.viewWrapper}>
-                        <View style={styles.passwordModalContainer}>
-                            <Text style={styles.modalTitleText}>Update Password</Text>
+                    <View style={styles(theme).viewWrapper}>
+                        <View style={styles(theme).passwordModalContainer}>
+                            <Text style={styles(theme).modalTitleText}>Update Password</Text>
                             <TextInput 
-                                style={styles.textInput}
+                                style={styles(theme).textInput}
                                 placeholder="Current password"
                                 secureTextEntry
                                 value={password}
                                 onChangeText={(value) => setPassword(value)}
                             />
                             <TextInput 
-                                style={styles.textInput}
+                                style={styles(theme).textInput}
                                 placeholder="New password"
                                 secureTextEntry
                                 value={newPassword}
                                 onChangeText={(value) => setNewPassword(value)}
                             />
                             <TextInput 
-                                style={styles.textInput}
+                                style={styles(theme).textInput}
                                 placeholder="Confirm password"
                                 secureTextEntry
                                 value={confirmNewPassword}
                                 onChangeText={(value) => setConfirmNewPassword(value)}
                             />
-                            <View style={styles.modalButtonContainer}>
+                            <View style={styles(theme).modalButtonContainer}>
                                 <TouchableHighlight 
                                     activeOpacity={0.95}
                                     underlayColor={'#919191'}
                                     onPress={togglePasswordModalVisibility} 
-                                    style={styles.modalButton} >
-                                    <Text style={styles.modalButtonText}>CANCEL</Text>
+                                    style={styles(theme).modalButton} >
+                                    <Text style={styles(theme).modalButtonText}>CANCEL</Text>
                                 </TouchableHighlight>
                                 <TouchableHighlight 
                                     activeOpacity={0.95}
                                     underlayColor={'#919191'}
                                     onPress={onConfirmUpdatePassword} 
-                                    style={styles.modalButton} >
-                                    <Text style={styles.modalButtonText}>CONFIRM</Text>
+                                    style={styles(theme).modalButton} >
+                                    <Text style={styles(theme).modalButtonText}>CONFIRM</Text>
                                 </TouchableHighlight>
                             </View>
                         </View>
                     </View>
                 </Modal>
-                <Text style={styles.headerText}>CHATBOT SETTINGS</Text>
-                <View style={styles.row}>
-                    <Text style={styles.descriptorText}>Save Message History</Text>
+                <Text style={styles(theme).headerText}>CHATBOT SETTINGS</Text>
+                <View style={styles(theme).row}>
+                    <Text style={styles(theme).descriptorText}>Save Message History</Text>
                     <Switch 
                         trackColor={{ false: "#ff4f64", true: "#62e046" }}
-                        thumbColor={isEnabled ? "#ededed" : "#ededed"}
+                        thumbColor={saveMessageHistory ? "#ededed" : "#ededed"}
                         ios_backgroundColor="#3e3e3e"
-                        onValueChange={toggleSwitch}
-                        value={isEnabled}
+                        onValueChange={toggleSaveMessageHistorySwitch}
+                        value={saveMessageHistory}
                     />
                 </View>
-                <Text style={styles.headerText}>ACCOUNT SETTINGS</Text>
-                <Pressable onPress={() => onLogOutPress()} style={styles.row2}>
-                    <Text style={styles.descriptorText}>Log Out</Text>
+                <View style={styles(theme).row}>
+                    <Text style={styles(theme).descriptorText}>Show Emotions</Text>
+                    <Switch 
+                        trackColor={{ false: "#ff4f64", true: "#62e046" }}
+                        thumbColor={showEmotions ? "#ededed" : "#ededed"}
+                        ios_backgroundColor="#3e3e3e"
+                        onValueChange={toggleShowEmotionsEnabled}
+                        value={showEmotions}
+                    />
+                </View>
+                <Text style={styles(theme).headerText}>APP SETTINGS</Text>
+                <View style={styles(theme).row}>
+                    <Text style={styles(theme).descriptorText}>Theme Color</Text>
+                    <View style={{ flexDirection: "row", padding: 0 }}>
+                        {colorOptions.map((x, index) => (
+                            <TouchableOpacity
+                                key={index}
+                                style={[styles(theme).circle, { backgroundColor: colorOptions[index] }]}
+                                onPress={() => { updateTheme(themes[index]) }}
+                            />
+                        ))}
+                    </View>
+                </View>
+                <View style={styles(theme).row}>
+                    <Text style={styles(theme).descriptorText}>Bubble Color</Text>
+                    <View style={{ flexDirection: "row", padding: 0 }}>
+                        {colorOptions.map((x, index) => (
+                            <TouchableOpacity
+                                key={index}
+                                style={[styles(theme).circle, { backgroundColor: colorOptions[index] }]}
+                                onPress={() => {}}
+                            />
+                        ))}
+                    </View>
+                </View>
+                <View style={styles(theme).row}>
+                    <Text style={styles(theme).descriptorText}>Font Size</Text>
+                    <View style={{ flexDirection: "row", alignItems: 'center', justifyContent: 'center' }}> 
+                        <Text style={styles(theme).smallText}>Small</Text>
+                        <Text style={styles(theme).mediumText}>Medium</Text>
+                        <Text style={styles(theme).largeText}>Large</Text>
+                    </View>
+                </View>
+                <Text style={styles(theme).headerText}>ACCOUNT SETTINGS</Text>
+                <Pressable onPress={() => onLogOutPress()} style={styles(theme).row2}>
+                    <Text style={styles(theme).descriptorText}>Log Out</Text>
                 </Pressable>
-                <Pressable onPress={() => onDeletePress()} style={styles.row2}>
-                    <Text style={styles.descriptorText}>Delete Account</Text>
+                <Pressable onPress={() => onDeletePress()} style={styles(theme).row3}>
+                    <Text style={styles(theme).descriptorText}>Delete Account</Text>
                 </Pressable>
                 <Modal 
                     animationType="none"
                     transparent visible ={isDeleteModalVisible}
                     presentationStyle="overFullScreen"
                     onDismiss={toggleDeleteModalVisibility} >
-                    <View style={styles.viewWrapper}>
-                        <View style={styles.deleteModalContainer}>
-                            <Text style={styles.modalTitleText}>Confirm Account Deletion</Text>
+                    <View style={styles(theme).viewWrapper}>
+                        <View style={styles(theme).deleteModalContainer}>
+                            <Text style={styles(theme).modalTitleText}>Confirm Account Deletion</Text>
                             <TextInput 
-                                style={styles.textInput}
+                                style={styles(theme).textInput}
                                 placeholder="Enter password"
                                 secureTextEntry
                                 value={password}
                                 onChangeText={(value) => setPassword(value)}
                             />
-                            <View style={styles.modalButtonContainer}>
+                            <View style={styles(theme).modalButtonContainer}>
                                 <TouchableHighlight 
                                     activeOpacity={0.95}
                                     underlayColor={'#919191'}
                                     onPress={toggleDeleteModalVisibility} 
-                                    style={styles.modalButton} >
-                                    <Text style={styles.modalButtonText}>CANCEL</Text>
+                                    style={styles(theme).modalButton} >
+                                    <Text style={styles(theme).modalButtonText}>CANCEL</Text>
                                 </TouchableHighlight>
                                 <TouchableHighlight 
                                     activeOpacity={0.95}
                                     underlayColor={'#919191'}
                                     onPress={onConfirmDeletePress} 
-                                    style={styles.modalButton} >
-                                    <Text style={styles.modalButtonText}>CONFIRM</Text>
+                                    style={styles(theme).modalButton} >
+                                    <Text style={styles(theme).modalButtonText}>CONFIRM</Text>
                                 </TouchableHighlight>
                             </View>
                         </View>
                     </View>
                 </Modal>
-            </View>
+            </ScrollView>
         )
     }
 }
 
+
+const styles = (theme) => StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: theme.background
+    },
+    headerText: {
+        fontSize: 12,
+        color: theme.tertiary,
+        marginLeft: 20,
+        marginTop: 20,
+        marginBottom: 5,
+    },
+    row: {
+        height: 55,
+        backgroundColor: theme.primary,
+        borderWidth: 0.5,
+        borderColor: theme.background,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingVertical: 15,
+        paddingHorizontal: 10,
+    },
+    row2: {
+        height: 55,
+        backgroundColor: theme.primary,
+        borderWidth: 0.5,
+        borderColor: theme.background,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingVertical: 15,
+        paddingHorizontal: 10,
+    },
+    row3: {
+        height: 55,
+        backgroundColor: theme.primary,
+        borderWidth: 0.5,
+        borderColor: theme.background,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingVertical: 15,
+        paddingHorizontal: 10,
+        marginBottom: 40
+    },
+    descriptorText: {
+        fontSize: 16,
+        color: theme.font,
+    },
+    valueText: {
+        fontSize: 16,
+        color: theme.secondary
+    },
+    smallText: {
+        fontSize: 12,
+        color: theme.secondary,
+        marginHorizontal: 10
+    },
+    mediumText: {
+        fontSize: 16,
+        color: theme.secondary,
+        marginHorizontal: 10
+    },
+    largeText: {
+        fontSize: 20,
+        color: theme.secondary,
+        marginHorizontal: 10
+    },
+    viewWrapper: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "rgba(0, 0, 0, 0.2)",
+    },
+    passwordModalContainer: {
+        alignItems: "center",
+        justifyContent: "center",
+        position: "absolute",
+        top: "35%",
+        left: "50%",
+        elevation: 5,
+        transform: [{ translateX: -(width * 0.4) }, 
+                    { translateY: -90 }],
+        height: 320,
+        width: width * 0.8,
+        backgroundColor: "#fff",
+        borderRadius: 7,
+    },
+    deleteModalContainer: {
+        alignItems: "center",
+        justifyContent: "center",
+        position: "absolute",
+        top: "40%",
+        left: "50%",
+        elevation: 5,
+        transform: [{ translateX: -(width * 0.4) }, 
+                    { translateY: -90 }],
+        height: 220,
+        width: width * 0.8,
+        backgroundColor: "#fff",
+        borderRadius: 7,
+    },
+    modalTitleText: {
+        color: '#666666',
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 20,
+    },
+    textInput: {
+        width: "80%",
+        borderRadius: 5,
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        borderColor: "rgba(0, 0, 0, 0.2)",
+        borderWidth: 1,
+        marginBottom: 8,
+    },
+    modalButtonContainer: {
+        flexDirection: 'row',
+    },  
+    modalButton: {
+        width: 100,
+        height: 40,
+        marginTop: 20,
+        marginHorizontal: 10,
+        backgroundColor: '#666666',
+        borderRadius: 5,
+        alignItems: "center",
+        justifyContent: 'center'
+    },
+    modalButtonText: {
+        fontWeight: 'bold',
+        color: 'white',
+    },
+
+    circle: {
+        width: 24,
+        height: 24,
+        borderRadius: 24 / 2,
+        backgroundColor: "red",
+        borderColor: "white",
+        borderWidth: 1,
+        marginLeft: 5,
+        marginRight: 5,
+    },
+})
+
+/*
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -410,6 +698,18 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingVertical: 15,
         paddingHorizontal: 10,
+    },
+    row3: {
+        height: 55,
+        backgroundColor: 'white',
+        borderWidth: 0.5,
+        borderColor: '#e3e3e3',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingVertical: 15,
+        paddingHorizontal: 10,
+        marginBottom: 40
     },
     descriptorText: {
         fontSize: 16,
@@ -483,5 +783,17 @@ const styles = StyleSheet.create({
     modalButtonText: {
         fontWeight: 'bold',
         color: 'white',
-    }
+    },
+
+    circle: {
+        width: 24,
+        height: 24,
+        borderRadius: 24 / 2,
+        backgroundColor: "red",
+        borderColor: "white",
+        borderWidth: 1,
+        marginLeft: 5,
+        marginRight: 5,
+    },
 })
+*/
