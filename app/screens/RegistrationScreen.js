@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react'
-import { StyleSheet, Image, Text, TextInput, TouchableOpacity, View, ImageBackground } from 'react-native'
+import { StyleSheet, Image, Text, TextInput, TouchableHighlight, View, ImageBackground } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { AuthContext } from '../navigation/AuthProvider';
 
@@ -14,7 +14,7 @@ export default function RegistrationScreen({navigation}) {
         navigation.navigate('Login');
     }
 
-    const onRegisterPress = () => {
+    const onRegisterPress = async () => {
         if (!name) {
             Alert.alert('Name is required.');
         } else if (!email) {
@@ -36,7 +36,7 @@ export default function RegistrationScreen({navigation}) {
     return (
         <ImageBackground 
             style={styles.container}
-            source={require("../assets/backgrounds/1.jpg")} 
+            source={require("../assets/backgrounds/rocks1.jpg")} 
             blurRadius={5}  >
             <KeyboardAwareScrollView
                 style={{ flex: 1, width: '100%' }}
@@ -84,11 +84,13 @@ export default function RegistrationScreen({navigation}) {
                     underlineColorAndroid="transparent"
                     autoCapitalize="none"
                 />
-                <TouchableOpacity
+                <TouchableHighlight
+                    activeOpacity={0.95}
+                    underlayColor={'#7e96fc'}
                     style={styles.button}
                     onPress={() => onRegisterPress()}>
                     <Text style={styles.buttonTitle}>Create account</Text>
-                </TouchableOpacity>
+                </TouchableHighlight>
                 <View style={styles.footerView}>
                     <Text style={styles.footerText}>Already got an account? <Text onPress={onFooterLinkPress} style={styles.footerLink}>Log in</Text></Text>
                 </View>
@@ -110,7 +112,7 @@ const styles = StyleSheet.create({
         height: 120,
         width: 120,
         alignSelf: "center",
-        margin: 30
+        margin: 40
     },
     input: {
         height: 48,

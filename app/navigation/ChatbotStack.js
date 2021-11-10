@@ -4,6 +4,11 @@ import ChatbotScreen from '../screens/ChatbotScreen';
 
 const Stack = createStackNavigator()
 
+/*
+    Chatbot Stack:
+    Shown when chatbot icon in tab navigator is clicked
+*/
+
 export default function ChatbotStack() {
     return (
         <Stack.Navigator screenOptions={{ headerShown: true }}>

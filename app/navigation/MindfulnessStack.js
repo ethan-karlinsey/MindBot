@@ -5,6 +5,11 @@ import HomeScreen from '../screens/HomeScreen';
 
 const Stack = createStackNavigator()
 
+/*
+    Mindfulness Stack:
+    Shown when mindfulness icon in tab navigator is clicked
+*/
+
 export default function MindfulnessStack() {
     return (
         <Stack.Navigator screenOptions={{ headerShown: true }}>

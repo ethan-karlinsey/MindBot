@@ -4,6 +4,12 @@ import { firebase } from '../firebase/config'
 
 export const AuthContext = createContext({});
 
+/*
+    Provides context to all children components no matter
+    how deeply nested. These functions and data can be 
+    accessed from any screen.
+*/
+
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
 
@@ -14,16 +20,21 @@ export const AuthProvider = ({ children }) => {
                 setUser,
                 login: async (email, password) => {
                     try {
-                        await firebase.auth().signInWithEmailAndPassword(email, password);
+                        await firebase.auth().signInWithEmailAndPassword(email, password);  // sign in
                     } catch (error) {
                         Alert.alert('Error', error+"");
                     }
                 },
                 register: async (email, password, name) => {
                     try { 
-                        await firebase.auth().createUserWithEmailAndPassword(email, password);
-                        const currentUser = firebase.auth().currentUser;
-                        const db = firebase.firestore();
+                        await firebase.auth().createUserWithEmailAndPassword(email, password);  // create new account
+                        const currentUser = firebase.auth().currentUser;    // get current user
+                        
+                        firebase.auth().currentUser.updateProfile({ // update user's name
+                            displayName: name,
+                        });
+
+                        const db = firebase.firestore();    // store user data in firestore
                         db.collection('users')
                             .doc(currentUser.uid)
                             .set({
@@ -37,7 +48,18 @@ export const AuthProvider = ({ children }) => {
                 },
                 logout: async () => {
                     try {
-                        await firebase.auth().signOut();
+                        await firebase.auth().signOut();    // sign out
+                    } catch (error) {
+                        Alert.alert('Error', error+"");
+                    }
+                },
+                deleteAccount: async () => {
+                    try {
+                        /*
+                            DELETE USER DATA FROM DATABASE HERE
+                        */
+                        const currentUser = firebase.auth().currentUser;    // get current user and delete
+                        await currentUser.delete();
                     } catch (error) {
                         Alert.alert('Error', error+"");
                     }

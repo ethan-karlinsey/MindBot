@@ -64,7 +64,9 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         borderRadius: 5,
         alignItems: "center",
-        justifyContent: 'center'
+        justifyContent: 'center',
+        borderWidth: 1,
+        borderColor: '#608075'
     },
     instantButton: {
         width: 160,
@@ -76,7 +78,9 @@ const styles = StyleSheet.create({
         marginBottom: 75,
         borderRadius: 5,
         alignItems: "center",
-        justifyContent: 'center'
+        justifyContent: 'center',
+        borderWidth: 1,
+        borderColor: '#608075'
     },
     everydayButton: {
         width: 160,
@@ -88,7 +92,9 @@ const styles = StyleSheet.create({
         marginBottom: 75,
         borderRadius: 5,
         alignItems: "center",
-        justifyContent: 'center'
+        justifyContent: 'center',
+        borderWidth: 1,
+        borderColor: '#608075'
     },
     buttonText: {
         fontSize: 20,

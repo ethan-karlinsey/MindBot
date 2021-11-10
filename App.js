@@ -5,5 +5,5 @@ import Providers from './app/navigation';
 LogBox.ignoreLogs(['Setting a timer'])
 
 export default function App() {
-  return <Providers />
+  return <Providers /> // call providers for routing
 }
