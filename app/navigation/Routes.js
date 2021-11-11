@@ -15,7 +15,6 @@ export default function Routes() {
         await setUser(result);    // set user in authcontext
 
         if (result) {
-            console.log(result);  
             try {
                 let doc = await firebase
                     .firestore()
@@ -25,7 +24,7 @@ export default function Routes() {
 
                 if (!doc.exists) {
                     console.log("User data not found");
-                } else {
+                } else {    // get user settings
                     let data = doc.data();
                     await setTheme(data.theme);
                     await setSaveMessageHistory(data.saveMessageHistory);

@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { ActivityIndicator, StyleSheet, TouchableHighlight, TouchableOpacity, Text, Modal, TextInput, View, Alert, Dimensions, Switch, Pressable, ScrollView } from 'react-native';
+import { StatusBar, ActivityIndicator, StyleSheet, TouchableHighlight, TouchableOpacity, Text, Modal, TextInput, View, Alert, Dimensions, Switch, Pressable, ScrollView } from 'react-native';
 import { Header } from "react-native-elements";
 import { AuthContext } from '../navigation/AuthProvider';
 import { firebase } from '../firebase/config';
@@ -17,6 +17,7 @@ const colorOptions = [
 
 const themes = [
   { // light
+    statusBar: 'dark-content',
     background: "#EBEBEB",
     font: "#000000",
     primary: "#FFFFFF",
@@ -24,6 +25,7 @@ const themes = [
     tertiary: "#666666"
   },
   { // dark
+    statusBar: 'light-content',
     background: "#000000",
     font: "#FFFFFF",
     primary: "#383838",
@@ -31,20 +33,23 @@ const themes = [
     tertiary: "#999999"
   },
   { // blue
+    statusBar: 'dark-content',
     background: "#5c93ff",
-    font: "#FFFFFF",
+    font: "#000000",
     primary: "#82acff",
-    secondary: "#DBDBDB",
-    tertiary: "#E3E3E3"
+    secondary: "#666666",
+    tertiary: "#4f4f4f"
   },
   { // green
+    statusBar: 'dark-content',
     background: "#2bb52a",
-    font: "#FFFFFF",
+    font: "#000000",
     primary: "#67c466",
-    secondary: "#DBDBDB",
-    tertiary: "#E3E3E3"
+    secondary: "#666666",
+    tertiary: "#4f4f4f"
   },
   { // yellow
+    statusBar: 'dark-content',
     background: "#f7f174",
     font: "#000000",
     primary: "#fffa94",
@@ -52,6 +57,7 @@ const themes = [
     tertiary: "#4f4f4f"
   },
   { // red
+    statusBar: 'dark-content',
     background: "#ff7070",
     font: "#000000",
     primary: "#ff9c9c",
@@ -98,7 +104,7 @@ export default function SettingsScreen({ navigation }) {
 
     const updateTheme = async (newTheme) => {
         await setTheme(newTheme);
-        if (theme != newTheme) {
+        if (theme !== newTheme) {
             firebase
                 .firestore()
                 .collection('users')
@@ -162,7 +168,7 @@ export default function SettingsScreen({ navigation }) {
     }
 
     const onDeletePress = () => {
-       toggleDeleteModalVisibility();
+        toggleDeleteModalVisibility();
     }
 
     const onConfirmUpdateName = async () => {
@@ -261,7 +267,7 @@ export default function SettingsScreen({ navigation }) {
         setPassword('');
     }
 
-    //console.log(user);
+    console.log(user);
     console.log(theme);
 
     if (loading){
@@ -277,6 +283,7 @@ export default function SettingsScreen({ navigation }) {
     } else {
         return (
             <ScrollView style={styles(theme).container}>
+                <StatusBar backgroundColor={theme.background} barStyle={theme.statusBar}/>
                 <Text style={styles(theme).headerText}>MY ACCOUNT</Text>
                 <Pressable onPress={() => onNamePress()} style={styles(theme).row}>
                     <Text style={styles(theme).descriptorText}>Name</Text>

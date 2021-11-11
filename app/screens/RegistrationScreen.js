@@ -8,7 +8,7 @@ export default function RegistrationScreen({navigation}) {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
-    const { register } = useContext(AuthContext);
+    const { register, setTheme } = useContext(AuthContext);
 
     const onFooterLinkPress = () => {
         navigation.navigate('Login');
@@ -26,6 +26,14 @@ export default function RegistrationScreen({navigation}) {
             return
         } else {
             register(email, password, name);
+            setTheme({
+                statusBar: 'dark-content',
+                background: "#EBEBEB",
+                font: "#000000",
+                primary: "#FFFFFF",
+                secondary: "#8C8C8C",
+                tertiary: "#E3E3E3"
+            });
             setName('');
             setEmail('');
             setPassword('');

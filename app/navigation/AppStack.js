@@ -12,7 +12,7 @@ const Tab = createMaterialBottomTabNavigator();
 /*
     Main application stack:
     Shown when the user is authenticated/signed in
-    Each navigation route for the tab navigation contains its own stack
+    Each navigation route for the tab navigation contains its own stack navigation
     Settings tab has SettingsStack, mindfulness has MindfulnessStack, chatbot has ChatbotStack
 */
 export default function AppStack() {
