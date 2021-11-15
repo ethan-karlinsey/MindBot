@@ -277,6 +277,7 @@ export default function SettingsScreen({ navigation }) {
                 alignItems: 'center',
                 justifyContent: 'center'
             }}>
+                <StatusBar backgroundColor={theme.background} barStyle={theme.statusBar}/>
                 <ActivityIndicator size='large' color='#6646ee' />
             </View>
         );

@@ -1,14 +1,17 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { StyleSheet, TouchableOpacity, TouchableHighlight, Text, Image, ImageBackground, View } from 'react-native';
+import { StyleSheet, StatusBar, TouchableHighlight, Text, Image, ImageBackground, View } from 'react-native';
 import { firebase } from '../firebase/config';
 import { AuthContext } from '../navigation/AuthProvider';
 
 export default function HomeScreen({ navigation }) {
+    const { theme } = useContext(AuthContext);
+
     return (
         <ImageBackground 
             source={require("../assets/backgrounds/rocks1.jpg")}
             blurRadius={1.5}
             style={styles.container}>
+            <StatusBar backgroundColor={theme.background} barStyle={theme.statusBar}/>
             <View style={{ alignItems: 'center'}} >
                 <Text style={styles.greeting}>Take a deep breath and let's do this!</Text>
                 <Image source={require("../assets/meditation.png")} style={styles.image}/>

@@ -1,6 +1,7 @@
 import React, { useState, useContext, useLayoutEffect, useEffect } from "react";
 import { GiftedChat, Bubble } from "react-native-gifted-chat";
 import {
+  StatusBar, 
   StyleSheet,
   View,
   Image,
@@ -87,7 +88,7 @@ const wait = (timeout) => {
 
 export default function ChatbotScreen({ navigation }, props) {
   const currentMessage = synchronousTrait(null);
-  const { user } = useContext(AuthContext);
+  const { user, theme } = useContext(AuthContext);
   const db = firebase.firestore();
   const chatsRef = db.collection(user.uid);
   const query = chatsRef.orderBy("createdAt", "desc");
@@ -171,7 +172,7 @@ export default function ChatbotScreen({ navigation }, props) {
     } else {
       var emotionImage = emotionImages[messageInfo.currentMessage.emotionIndex];
 
-      return <Avatar rounded size="medium" source={emotionImage}></Avatar>;
+      return <Avatar rounded size="medium" source={emotionImage} backgroundColor={theme.secondary}></Avatar>;
     }
   };
 
@@ -181,26 +182,26 @@ export default function ChatbotScreen({ navigation }, props) {
         {...messages}
         textStyle={{
           right: {
-            color: "black",
+            color: theme.font,
           },
           left: {
-            color: "black",
+            color: theme.font,
           },
         }}
         timeTextStyle={{
           left: {
-            color: "black",
+            color: theme.font,
           },
           right: {
-            color: "black",
+            color: theme.font,
           },
         }}
         wrapperStyle={{
           left: {
-            backgroundColor: wrapperColor,
+            backgroundColor: theme.primary,
           },
           right: {
-            backgroundColor: wrapperColor,
+            backgroundColor: theme.primary,
           },
         }}
         user={messages.currentMessage.user}
@@ -242,37 +243,26 @@ export default function ChatbotScreen({ navigation }, props) {
     });
   };
 
+
   return (
     <View style=
       {{flex: 1,
       justifyContent: 'center',
-      backgroundColor: chatBackgroundColor,
+      backgroundColor: theme.background,
     }}>
-      <Header
-        backgroundColor={chatHeaderColor}
-        leftComponent={{ icon: "west", color: "#fff" }}
-        centerComponent={{
-          text: "ChatBot",
-          style: { color: "#ffffff", fontSize: 22 },
-        }}
-        rightComponent={{
-          icon: "settings",
-          color: "#fff",
-          onPress: () => setsettingVisible(!settingVisible),
-        }}
-      />
-      <View style={styles.buttonContainer}>
+      <StatusBar backgroundColor={theme.background} barStyle={theme.statusBar}/>
+      <View style={styles(theme).buttonContainer}>
         <TouchableOpacity
-          style={[styles.button, { backgroundColor: chatHeaderColor }]}
+          style={styles(theme).headerButton}
           onPress={() => sendLetsChat()}
         >
-          <Text style={[styles.chatButtonText, { backgroundColor: chatHeaderColor }]}>Start a conversation</Text>
+          <Text style={styles(theme).chatButtonText}>Start a conversation</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.button, { backgroundColor: chatHeaderColor }]}
+          style={styles(theme).headerButton}
           onPress={() => sendKindMessage()}
         >
-          <Text style={[styles.chatButtonText, { backgroundColor: chatHeaderColor }]}>Receive a kind message</Text>
+          <Text style={styles(theme).chatButtonText}>Receive a kind message</Text>
         </TouchableOpacity>
       </View>
       <Modal
@@ -284,15 +274,15 @@ export default function ChatbotScreen({ navigation }, props) {
           setsettingVisible(!settingVisible);
         }}
       >
-        <View style={styles.modalView}>
-          <Text style={styles.modalText}>Setting</Text>
+        <View style={styles(theme).modalView}>
+          <Text style={styles(theme).modalText}>Setting</Text>
           <Text style={{ textAlign: "left" }}>Theme color</Text>
           <View style={{ flexDirection: "row", padding: 10 }}>
             {colorOptions.map((x, index) => (
               <TouchableOpacity
                 key={index}
                 style={[
-                  styles.circle,
+                  styles(theme).circle,
                   { backgroundColor: colorOptions[index] },
                 ]}
                 onPress={() => {
@@ -308,7 +298,7 @@ export default function ChatbotScreen({ navigation }, props) {
             {colorOptions.map((x, index) => (
               <TouchableOpacity
                 key={index}
-                style={[styles.circle, { backgroundColor: x }]}
+                style={[styles(theme).circle, { backgroundColor: x }]}
                 onPress={() => {
                   settextColor(colorSetting[index][2]);
                   onRefresh();
@@ -374,10 +364,10 @@ export default function ChatbotScreen({ navigation }, props) {
             </TouchableOpacity>
           </View>
           <Pressable
-            style={[styles.button, styles.buttonClose]}
+            style={[styles(theme).button, styles(theme).buttonClose]}
             onPress={() => setsettingVisible(!settingVisible)}
           >
-            <Text style={styles.textStyle}> Close </Text>
+            <Text style={styles(theme).textStyle}> Close </Text>
           </Pressable>
         </View>
       </Modal>
@@ -402,95 +392,95 @@ export default function ChatbotScreen({ navigation }, props) {
         />
       ) : null}
       <View>
-        <View style={styles.emotionContainer}>
+        <View style={styles(theme).emotionContainer}>
           <TouchableOpacity
-            style={(selectedEmotion == 0) ? [styles.selectedEmotionButton, {borderColor: wrapperColor, backgroundColor: chatHeaderColor,}]
-                                          : [styles.emotionButton, {backgroundColor: chatHeaderColor}]}
+            style={(selectedEmotion == 0) ? [styles(theme).selectedEmotionButton, {borderColor: wrapperColor, backgroundColor: theme.secondary,}]
+                                          : [styles(theme).emotionButton, {backgroundColor: theme.secondary}]}
             activeOpacity={0.5}
             onPress={() => setSelectedEmotion(0)}
           >
-            <Image style={styles.buttonImage} source={emotionImages[0]} />
-            <Text style={styles.buttonText}>Happy</Text>
+            <Image style={styles(theme).buttonImage} source={emotionImages[0]} />
+            <Text style={styles(theme).buttonText}>Happy</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={(selectedEmotion == 1) ? [styles.selectedEmotionButton, {borderColor: wrapperColor, backgroundColor: chatHeaderColor,}]
-                                          : [styles.emotionButton, {backgroundColor: chatHeaderColor}]}
+            style={(selectedEmotion == 1) ? [styles(theme).selectedEmotionButton, {borderColor: wrapperColor, backgroundColor: theme.secondary,}]
+                                          : [styles(theme).emotionButton, {backgroundColor: theme.secondary}]}
             activeOpacity={0.5}
             onPress={() => setSelectedEmotion(1)}
           >
-            <Image style={styles.buttonImage} source={emotionImages[1]} />
-            <Text style={styles.buttonText}>Sad</Text>
+            <Image style={styles(theme).buttonImage} source={emotionImages[1]} />
+            <Text style={styles(theme).buttonText}>Sad</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={(selectedEmotion == 2) ? [styles.selectedEmotionButton, {borderColor: wrapperColor, backgroundColor: chatHeaderColor,}]
-                                          : [styles.emotionButton, {backgroundColor: chatHeaderColor}]}
+            style={(selectedEmotion == 2) ? [styles(theme).selectedEmotionButton, {borderColor: wrapperColor, backgroundColor: theme.secondary,}]
+                                          : [styles(theme).emotionButton, {backgroundColor: theme.secondary}]}
             activeOpacity={0.5}
             onPress={() => setSelectedEmotion(2)}
           >
-            <Image style={styles.buttonImage} source={emotionImages[2]} />
-            <Text style={styles.buttonText}>Angry</Text>
+            <Image style={styles(theme).buttonImage} source={emotionImages[2]} />
+            <Text style={styles(theme).buttonText}>Angry</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={(selectedEmotion == 3) ? [styles.selectedEmotionButton, {borderColor: wrapperColor, backgroundColor: chatHeaderColor,}]
-                                          : [styles.emotionButton, {backgroundColor: chatHeaderColor}]}
+            style={(selectedEmotion == 3) ? [styles(theme).selectedEmotionButton, {borderColor: wrapperColor, backgroundColor: theme.secondary,}]
+                                          : [styles(theme).emotionButton, {backgroundColor: theme.secondary}]}
             activeOpacity={0.5}
             onPress={() => setSelectedEmotion(3)}
           >
-            <Image style={styles.buttonImage} source={emotionImages[3]} />
-            <Text style={styles.buttonText}>Crying</Text>
+            <Image style={styles(theme).buttonImage} source={emotionImages[3]} />
+            <Text style={styles(theme).buttonText}>Crying</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={(selectedEmotion == 4) ? [styles.selectedEmotionButton, {borderColor: wrapperColor, backgroundColor: chatHeaderColor,}]
-                                          : [styles.emotionButton, {backgroundColor: chatHeaderColor}]}
+            style={(selectedEmotion == 4) ? [styles(theme).selectedEmotionButton, {borderColor: wrapperColor, backgroundColor: theme.secondary,}]
+                                          : [styles(theme).emotionButton, {backgroundColor: theme.secondary}]}
             activeOpacity={0.5}
             onPress={() => setSelectedEmotion(4)}
           >
-            <Image style={styles.buttonImage} source={emotionImages[4]} />
-            <Text style={styles.buttonText}>Laughing</Text>
+            <Image style={styles(theme).buttonImage} source={emotionImages[4]} />
+            <Text style={styles(theme).buttonText}>Laughing</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={(selectedEmotion == 5) ? [styles.selectedEmotionButton, {borderColor: wrapperColor, backgroundColor: chatHeaderColor,}]
-                                          : [styles.emotionButton, {backgroundColor: chatHeaderColor}]}
+            style={(selectedEmotion == 5) ? [styles(theme).selectedEmotionButton, {borderColor: wrapperColor, backgroundColor: theme.secondary,}]
+                                          : [styles(theme).emotionButton, {backgroundColor: theme.secondary}]}
             activeOpacity={0.5}
             onPress={() => setSelectedEmotion(5)}
           >
-            <Image style={styles.buttonImage} source={emotionImages[5]} />
-            <Text style={styles.buttonText}>Nervous</Text>
+            <Image style={styles(theme).buttonImage} source={emotionImages[5]} />
+            <Text style={styles(theme).buttonText}>Nervous</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={(selectedEmotion == 6) ? [styles.selectedEmotionButton, {borderColor: wrapperColor, backgroundColor: chatHeaderColor,}]
-                                          : [styles.emotionButton, {backgroundColor: chatHeaderColor}]}
+            style={(selectedEmotion == 6) ? [styles(theme).selectedEmotionButton, {borderColor: wrapperColor, backgroundColor: theme.secondary,}]
+                                          : [styles(theme).emotionButton, {backgroundColor: theme.secondary}]}
             activeOpacity={0.5}
             onPress={() => setSelectedEmotion(6)}
           >
-            <Image style={styles.buttonImage} source={emotionImages[6]} />
-            <Text style={styles.buttonText}>Surprised</Text>
+            <Image style={styles(theme).buttonImage} source={emotionImages[6]} />
+            <Text style={styles(theme).buttonText}>Surprised</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={(selectedEmotion == 7) ? [styles.selectedEmotionButton, {borderColor: wrapperColor, backgroundColor: chatHeaderColor,}]
-                                          : [styles.emotionButton, {backgroundColor: chatHeaderColor}]}
+            style={(selectedEmotion == 7) ? [styles(theme).selectedEmotionButton, {borderColor: wrapperColor, backgroundColor: theme.secondary,}]
+                                          : [styles(theme).emotionButton, {backgroundColor: theme.secondary}]}
             activeOpacity={0.5}
             onPress={() => setSelectedEmotion(7)}
           >
-            <Image style={styles.buttonImage} source={emotionImages[7]} />
-            <Text style={styles.buttonText}>Confused</Text>
+            <Image style={styles(theme).buttonImage} source={emotionImages[7]} />
+            <Text style={styles(theme).buttonText}>Confused</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={(selectedEmotion == 8) ? [styles.selectedEmotionButton, {borderColor: wrapperColor, backgroundColor: chatHeaderColor,}]
-                                          : [styles.emotionButton, {backgroundColor: chatHeaderColor}]}
+            style={(selectedEmotion == 8) ? [styles(theme).selectedEmotionButton, {borderColor: wrapperColor, backgroundColor: theme.secondary,}]
+                                          : [styles(theme).emotionButton, {backgroundColor: theme.secondary}]}
             activeOpacity={0.5}
             onPress={() => setSelectedEmotion(8)}
           >
-            <Image style={styles.buttonImage} source={emotionImages[8]} />
-            <Text style={styles.buttonText}>Tired</Text>
+            <Image style={styles(theme).buttonImage} source={emotionImages[8]} />
+            <Text style={styles(theme).buttonText}>Tired</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={(selectedEmotion == 9) ? [styles.selectedEmotionButton, {borderColor: wrapperColor, backgroundColor: chatHeaderColor,}]
-                                          : [styles.emotionButton, {backgroundColor: chatHeaderColor}]}
+            style={(selectedEmotion == 9) ? [styles(theme).selectedEmotionButton, {borderColor: wrapperColor, backgroundColor: theme.secondary,}]
+                                          : [styles(theme).emotionButton, {backgroundColor: theme.secondary}]}
             activeOpacity={0.5}
             onPress={() => setSelectedEmotion(9)}
           >
-            <Text style={styles.buttonText}>None</Text>
+            <Text style={styles(theme).buttonText}>None</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -498,25 +488,36 @@ export default function ChatbotScreen({ navigation }, props) {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = (theme) => StyleSheet.create({
   chatBotContainer: {
     flex: 1,
     justifyContent: "center",
     backgroundColor: "#E5E5E5",
   },
   buttonContainer: {
-    marginTop: 5,
+    marginTop: 10,
+    padding: 5,
     justifyContent: "center",
     flexDirection: "row",
-    justifyContent: "space-around",
+    justifyContent: "center",
     alignItems: "center",
   },
+  headerButton: {
+    backgroundColor: theme.primary,
+    height: 50,
+    width: 185,
+    padding: 8,
+    marginHorizontal: 5,
+    borderRadius: 15,
+  },
   button: {
+    backgroundColor: theme.primary,
     width: "40%",
     height: 50,
     borderRadius: 20,
   },
   chatButtonText: {
+    color: theme.font,
     justifyContent: "center",
     textAlign: "center",
     fontWeight: "bold",
