@@ -26,15 +26,6 @@ export default function AppStack() {
             screenOptions={{ headerShown: true, headerTitleAlign: 'center' }} 
         >
             <Tab.Screen 
-                name='Settings' 
-                component={SettingsStack} 
-                options={{ 
-                    tabBarIcon: ({ color }) => (
-                        <MaterialCommunityIcons name="cog" color={color} size={26} />
-                    ),
-                }} 
-            />
-            <Tab.Screen 
                 name='Mindfulness' 
                 component={MindfulnessStack} 
                 options={{ 
@@ -49,6 +40,15 @@ export default function AppStack() {
                 options={{ 
                     tabBarIcon: ({ color }) => (
                         <MaterialCommunityIcons name="chat" color={color} size={26} />
+                    ),
+                }} 
+            />
+            <Tab.Screen 
+                name='Settings' 
+                component={SettingsStack} 
+                options={{ 
+                    tabBarIcon: ({ color }) => (
+                        <MaterialCommunityIcons name="cog" color={color} size={26} />
                     ),
                 }} 
             />

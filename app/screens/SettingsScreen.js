@@ -1,71 +1,60 @@
 import React, { useContext, useState } from 'react';
 import { StatusBar, ActivityIndicator, StyleSheet, TouchableHighlight, TouchableOpacity, Text, Modal, TextInput, View, Alert, Dimensions, Switch, Pressable, ScrollView } from 'react-native';
-import { Header } from "react-native-elements";
 import { AuthContext } from '../navigation/AuthProvider';
 import { firebase } from '../firebase/config';
 
 const { width } = Dimensions.get("window");
 
 const colorOptions = [
-  "#E4E5D6",
-  "#515155",
-  "#4C78B9",
-  "#60A099",
-  "#F9C633",
-  "#fa5757",
+  "#B4B5A9",
+  "#242428",
+  "#1D529F",
+  "#358179",
+  "#FBAA60",
 ];
 
 const themes = [
   { // light
     statusBar: 'dark-content',
-    background: "#EBEBEB",
+    background: "#B4B5A9",
     font: "#000000",
-    primary: "#FFFFFF",
-    secondary: "#8C8C8C",
+    primary: "#E4E5D6",
+    secondary: "#FDFDFB",
     tertiary: "#666666"
   },
   { // dark
     statusBar: 'light-content',
-    background: "#000000",
+    background: "#242428",
     font: "#FFFFFF",
-    primary: "#383838",
-    secondary: "#8C8C8C",
-    tertiary: "#999999"
+    primary: "#515155",
+    secondary: "#9D9D9F",
+    tertiary: "#E4E5D6"
   },
   { // blue
     statusBar: 'dark-content',
-    background: "#5c93ff",
+    background: "#1D529F",
     font: "#000000",
-    primary: "#82acff",
-    secondary: "#666666",
-    tertiary: "#4f4f4f"
+    primary: "#4C78B9",
+    secondary: "#9AB3D7",
+    tertiary: "#E4E5D6"
   },
   { // green
     statusBar: 'dark-content',
-    background: "#2bb52a",
+    background: "#358179",
     font: "#000000",
-    primary: "#67c466",
-    secondary: "#666666",
-    tertiary: "#4f4f4f"
-  },
-  { // yellow
-    statusBar: 'dark-content',
-    background: "#f7f174",
-    font: "#000000",
-    primary: "#fffa94",
-    secondary: "#666666",
-    tertiary: "#4f4f4f"
+    primary: "#60A099",
+    secondary: "#A5C9C5",
+    tertiary: "#E4E5D6"
   },
   { // red
     statusBar: 'dark-content',
-    background: "#ff7070",
+    background: "#FBAA60",
     font: "#000000",
-    primary: "#ff9c9c",
-    secondary: "#666666",
+    primary: "#FBC490",
+    secondary: "#F0CCB0",
     tertiary: "#4f4f4f"
   },
 ];
-
 
 export default function SettingsScreen({ navigation }) {
     const { user, theme, setTheme, saveMessageHistory, setSaveMessageHistory, showEmotions, setShowEmotions, logout, deleteAccount } = useContext(AuthContext);
@@ -89,16 +78,6 @@ export default function SettingsScreen({ navigation }) {
             .doc(user.uid)
             .update({
                 saveMessageHistory: !saveMessageHistory
-            });
-    }
-    const toggleShowEmotionsEnabled = async() => {
-        await setShowEmotions(previousState => !previousState);
-        firebase
-            .firestore()
-            .collection('users')
-            .doc(user.uid)
-            .update({
-                showEmotions: !showEmotions
             });
     }
 
@@ -436,16 +415,6 @@ export default function SettingsScreen({ navigation }) {
                         value={saveMessageHistory}
                     />
                 </View>
-                <View style={styles(theme).row}>
-                    <Text style={styles(theme).descriptorText}>Show Emotions</Text>
-                    <Switch 
-                        trackColor={{ false: "#ff4f64", true: "#62e046" }}
-                        thumbColor={showEmotions ? "#ededed" : "#ededed"}
-                        ios_backgroundColor="#3e3e3e"
-                        onValueChange={toggleShowEmotionsEnabled}
-                        value={showEmotions}
-                    />
-                </View>
                 <Text style={styles(theme).headerText}>APP SETTINGS</Text>
                 <View style={styles(theme).row}>
                     <Text style={styles(theme).descriptorText}>Theme Color</Text>
@@ -455,18 +424,6 @@ export default function SettingsScreen({ navigation }) {
                                 key={index}
                                 style={[styles(theme).circle, { backgroundColor: colorOptions[index] }]}
                                 onPress={() => { updateTheme(themes[index]) }}
-                            />
-                        ))}
-                    </View>
-                </View>
-                <View style={styles(theme).row}>
-                    <Text style={styles(theme).descriptorText}>Bubble Color</Text>
-                    <View style={{ flexDirection: "row", padding: 0 }}>
-                        {colorOptions.map((x, index) => (
-                            <TouchableOpacity
-                                key={index}
-                                style={[styles(theme).circle, { backgroundColor: colorOptions[index] }]}
-                                onPress={() => {}}
                             />
                         ))}
                     </View>
@@ -577,21 +534,21 @@ const styles = (theme) => StyleSheet.create({
     },
     valueText: {
         fontSize: 16,
-        color: theme.secondary
+        color: theme.font
     },
     smallText: {
         fontSize: 12,
-        color: theme.secondary,
+        color: theme.font,
         marginHorizontal: 10
     },
     mediumText: {
         fontSize: 16,
-        color: theme.secondary,
+        color: theme.font,
         marginHorizontal: 10
     },
     largeText: {
         fontSize: 20,
-        color: theme.secondary,
+        color: theme.font,
         marginHorizontal: 10
     },
     viewWrapper: {

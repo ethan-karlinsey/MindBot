@@ -1,4 +1,4 @@
-import React, { useState, useContext, useLayoutEffect, useEffect } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { GiftedChat, Bubble } from "react-native-gifted-chat";
 import {
   StatusBar, 
@@ -8,17 +8,12 @@ import {
   Text,
   Keyboard,
   TouchableOpacity,
-  Pressable,
 } from "react-native";
 import { Avatar } from "react-native-elements";
 import firebase from "firebase";
 import "firebase/firestore";
 import { useCollectionData } from "react-firebase-hooks/firestore";
-import { createNavigatorFactory } from "@react-navigation/core";
-import Modal from "./Modal.js";
 import { AuthContext } from "../navigation/AuthProvider";
-import { Platform } from "react-native";
-import { Header } from "react-native-elements";
 import synchronousTrait from "../firebase/synchronousTrait.js"
 
 let emotionImages = [
@@ -64,80 +59,20 @@ const emotions = [
   "Tired",
   "None",
 ];
-const colorOptions = [
-  "#E4E5D6",
-  "#515155",
-  "#4C78B9",
-  "#60A099",
-  "#F9C633",
-  "#FF7233",
-];
 
-// Header color, background color, text color
-const colorSetting = [
-  ["#B4B5A9", "#E4E5D6", "#FDFDFB"],
-  ["#242428", "#515155", "#9D9D9F"],
-  ["#1D529F", "#4C78B9", "#9AB3D7"],
-  ["#358179", "#60A099", "#A5C9C5"],
-  ["#ECAF00", "#F9C633", "#FCDF8C"],
-  ["#F16E35", "#FE9060", "#FFC0A5"],
-];
 const wait = (timeout) => {
   return new Promise((resolve) => setTimeout(resolve, timeout));
 };
 
-export default function ChatbotScreen({ navigation }, props) {
+export default function ChatbotScreen() {
   const currentMessage = synchronousTrait(null);
   const { user, theme } = useContext(AuthContext);
   const db = firebase.firestore();
   const chatsRef = db.collection(user.uid);
   const query = chatsRef.orderBy("createdAt", "desc");
   const [messages] = useCollectionData(query, { idField: "id" });
-  const [id, setId] = useState("");
-  const [name, setName] = useState("");
-  const [settingVisible, setsettingVisible] = useState(false);
-  const [chatHeaderColor, setHeaderColor] = useState(colorSetting[0][0]);
-  const [chatBackgroundColor, setBackgroundColor] = useState(colorSetting[0][1]);
-  const [wrapperColor, settextColor] = useState(colorSetting[0][2]);
-  const [chatShowEmotions, setChatShowEmotions] = useState(true);
-  const [chatFontSize, setChatFontSize] = useState(12);
   const [showBubbles, setShowBubbles] = useState(true);
   const [selectedEmotion, setSelectedEmotion] = useState(0);
-
-  const onRefresh = React.useCallback(() => {
-    setShowBubbles(false);
-    console.log("refreshing");
-    wait(0).then(() => setShowBubbles(true));
-  }, []);
-
-  useLayoutEffect(() => {
-    let isMounted = true;
-    async function getUserInfo() {
-      try {
-        let doc = await firebase
-          .firestore()
-          .collection("users")
-          .doc(user.uid)
-          .get();
-
-        if (!doc.exists) {
-          console.log("User data not found");
-        } else {
-          let data = doc.data();
-          if (isMounted) {
-            setName(data.name);
-            setId(data._id);
-          }
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    getUserInfo();
-    return () => {
-      isMounted = false;
-    };
-  });
 
   const sendMessage = (input) => {
 
@@ -150,8 +85,8 @@ export default function ChatbotScreen({ navigation }, props) {
       emotionIndex: selectedEmotion,
       emotion: emotions[selectedEmotion],
       user: {
-        _id: id,
-        name: name,
+        _id: user.uid,
+        name: user.displayName,
       },
     });
     currentMessage.set(null);
@@ -161,13 +96,13 @@ export default function ChatbotScreen({ navigation }, props) {
     const { currentMessage } = props;
     const { text: currText } = currentMessage;
     return (
-      <Text style={{ fontSize: chatFontSize, padding: 5 }}> {currText}</Text>
+      <Text style={{ color: theme.font, fontSize: 12, padding: 5 }}> {currText}</Text>
     );
   };
 
   const createAvatar = (messageInfo) => {
     // If the emotion the user selects is "None"
-    if (messageInfo.currentMessage.emotionIndex == emotionImages.length || !chatShowEmotions) {
+    if (messageInfo.currentMessage.emotionIndex == emotionImages.length) {
       return null;
     } else {
       var emotionImage = emotionImages[messageInfo.currentMessage.emotionIndex];
@@ -265,118 +200,12 @@ export default function ChatbotScreen({ navigation }, props) {
           <Text style={styles(theme).chatButtonText}>Receive a kind message</Text>
         </TouchableOpacity>
       </View>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={settingVisible}
-        onRequestClose={() => {
-          Alert.alert("Modal has been closed.");
-          setsettingVisible(!settingVisible);
-        }}
-      >
-        <View style={styles(theme).modalView}>
-          <Text style={styles(theme).modalText}>Setting</Text>
-          <Text style={{ textAlign: "left" }}>Theme color</Text>
-          <View style={{ flexDirection: "row", padding: 10 }}>
-            {colorOptions.map((x, index) => (
-              <TouchableOpacity
-                key={index}
-                style={[
-                  styles(theme).circle,
-                  { backgroundColor: colorOptions[index] },
-                ]}
-                onPress={() => {
-                  setBackgroundColor(colorSetting[index][1]);
-                  setHeaderColor(colorSetting[index][0]);
-                  onRefresh();
-                }}
-              />
-            ))}
-          </View>
-          <Text style={{ textAlign: "left" }}>Bubble color</Text>
-          <View style={{ flexDirection: "row", padding: 10 }}>
-            {colorOptions.map((x, index) => (
-              <TouchableOpacity
-                key={index}
-                style={[styles(theme).circle, { backgroundColor: x }]}
-                onPress={() => {
-                  settextColor(colorSetting[index][2]);
-                  onRefresh();
-                }}
-              />
-            ))}
-          </View>
-          <Text>Font Size</Text>
-          <View style={{ flexDirection: "row", padding: 10 }}>
-            <TouchableOpacity
-              style={{ fontSize: 15, padding: 10 }}
-              onPress={() => {
-                setChatFontSize(25);
-                onRefresh();
-              }}
-            >
-              <Text>Large</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{ fontSize: 15, padding: 10 }}
-              onPress={() => {
-                setChatFontSize(20);
-                onRefresh();
-              }}
-            >
-              <Text>Medium</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{ fontSize: 15, padding: 10 }}
-              onPress={() => {
-                setChatFontSize(15);
-                onRefresh();
-              }}
-            >
-              <Text>Small</Text>
-            </TouchableOpacity>
-          </View>
-          <Text>Show Emotions</Text>
-          <View
-            style={{
-              flexDirection: "row",
-              padding: 10,
-              alignContent: "center",
-            }}
-          >
-            <TouchableOpacity
-              style={{ fontSize: 15, padding: 10 }}
-              onPress={() => {
-                setChatShowEmotions(true);
-                onRefresh();
-              }}
-            >
-              <Text>On</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{ fontSize: 15, padding: 10 }}
-              onPress={() => {
-                setChatShowEmotions(false);
-                onRefresh();
-              }}
-            >
-              <Text>Off</Text>
-            </TouchableOpacity>
-          </View>
-          <Pressable
-            style={[styles(theme).button, styles(theme).buttonClose]}
-            onPress={() => setsettingVisible(!settingVisible)}
-          >
-            <Text style={styles(theme).textStyle}> Close </Text>
-          </Pressable>
-        </View>
-      </Modal>
       {showBubbles ? (
         <GiftedChat
           messages={messages}
           user={{
-            _id: id,
-            name: name,
+            _id: user.uid,
+            name: user.displayName,
           }}
           onSend={(messages) => {
             Keyboard.dismiss();
@@ -394,7 +223,7 @@ export default function ChatbotScreen({ navigation }, props) {
       <View>
         <View style={styles(theme).emotionContainer}>
           <TouchableOpacity
-            style={(selectedEmotion == 0) ? [styles(theme).selectedEmotionButton, {borderColor: wrapperColor, backgroundColor: theme.secondary,}]
+            style={(selectedEmotion == 0) ? [styles(theme).selectedEmotionButton, {borderColor: theme.font, backgroundColor: theme.secondary,}]
                                           : [styles(theme).emotionButton, {backgroundColor: theme.secondary}]}
             activeOpacity={0.5}
             onPress={() => setSelectedEmotion(0)}
@@ -403,7 +232,7 @@ export default function ChatbotScreen({ navigation }, props) {
             <Text style={styles(theme).buttonText}>Happy</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={(selectedEmotion == 1) ? [styles(theme).selectedEmotionButton, {borderColor: wrapperColor, backgroundColor: theme.secondary,}]
+            style={(selectedEmotion == 1) ? [styles(theme).selectedEmotionButton, {borderColor: theme.font, backgroundColor: theme.secondary,}]
                                           : [styles(theme).emotionButton, {backgroundColor: theme.secondary}]}
             activeOpacity={0.5}
             onPress={() => setSelectedEmotion(1)}
@@ -412,7 +241,7 @@ export default function ChatbotScreen({ navigation }, props) {
             <Text style={styles(theme).buttonText}>Sad</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={(selectedEmotion == 2) ? [styles(theme).selectedEmotionButton, {borderColor: wrapperColor, backgroundColor: theme.secondary,}]
+            style={(selectedEmotion == 2) ? [styles(theme).selectedEmotionButton, {borderColor: theme.font, backgroundColor: theme.secondary,}]
                                           : [styles(theme).emotionButton, {backgroundColor: theme.secondary}]}
             activeOpacity={0.5}
             onPress={() => setSelectedEmotion(2)}
@@ -421,7 +250,7 @@ export default function ChatbotScreen({ navigation }, props) {
             <Text style={styles(theme).buttonText}>Angry</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={(selectedEmotion == 3) ? [styles(theme).selectedEmotionButton, {borderColor: wrapperColor, backgroundColor: theme.secondary,}]
+            style={(selectedEmotion == 3) ? [styles(theme).selectedEmotionButton, {borderColor: theme.font, backgroundColor: theme.secondary,}]
                                           : [styles(theme).emotionButton, {backgroundColor: theme.secondary}]}
             activeOpacity={0.5}
             onPress={() => setSelectedEmotion(3)}
@@ -430,7 +259,7 @@ export default function ChatbotScreen({ navigation }, props) {
             <Text style={styles(theme).buttonText}>Crying</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={(selectedEmotion == 4) ? [styles(theme).selectedEmotionButton, {borderColor: wrapperColor, backgroundColor: theme.secondary,}]
+            style={(selectedEmotion == 4) ? [styles(theme).selectedEmotionButton, {borderColor: theme.font, backgroundColor: theme.secondary,}]
                                           : [styles(theme).emotionButton, {backgroundColor: theme.secondary}]}
             activeOpacity={0.5}
             onPress={() => setSelectedEmotion(4)}
@@ -439,7 +268,7 @@ export default function ChatbotScreen({ navigation }, props) {
             <Text style={styles(theme).buttonText}>Laughing</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={(selectedEmotion == 5) ? [styles(theme).selectedEmotionButton, {borderColor: wrapperColor, backgroundColor: theme.secondary,}]
+            style={(selectedEmotion == 5) ? [styles(theme).selectedEmotionButton, {borderColor: theme.font, backgroundColor: theme.secondary,}]
                                           : [styles(theme).emotionButton, {backgroundColor: theme.secondary}]}
             activeOpacity={0.5}
             onPress={() => setSelectedEmotion(5)}
@@ -448,7 +277,7 @@ export default function ChatbotScreen({ navigation }, props) {
             <Text style={styles(theme).buttonText}>Nervous</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={(selectedEmotion == 6) ? [styles(theme).selectedEmotionButton, {borderColor: wrapperColor, backgroundColor: theme.secondary,}]
+            style={(selectedEmotion == 6) ? [styles(theme).selectedEmotionButton, {borderColor: theme.font, backgroundColor: theme.secondary,}]
                                           : [styles(theme).emotionButton, {backgroundColor: theme.secondary}]}
             activeOpacity={0.5}
             onPress={() => setSelectedEmotion(6)}
@@ -457,7 +286,7 @@ export default function ChatbotScreen({ navigation }, props) {
             <Text style={styles(theme).buttonText}>Surprised</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={(selectedEmotion == 7) ? [styles(theme).selectedEmotionButton, {borderColor: wrapperColor, backgroundColor: theme.secondary,}]
+            style={(selectedEmotion == 7) ? [styles(theme).selectedEmotionButton, {borderColor: theme.font, backgroundColor: theme.secondary,}]
                                           : [styles(theme).emotionButton, {backgroundColor: theme.secondary}]}
             activeOpacity={0.5}
             onPress={() => setSelectedEmotion(7)}
@@ -466,7 +295,7 @@ export default function ChatbotScreen({ navigation }, props) {
             <Text style={styles(theme).buttonText}>Confused</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={(selectedEmotion == 8) ? [styles(theme).selectedEmotionButton, {borderColor: wrapperColor, backgroundColor: theme.secondary,}]
+            style={(selectedEmotion == 8) ? [styles(theme).selectedEmotionButton, {borderColor: theme.font, backgroundColor: theme.secondary,}]
                                           : [styles(theme).emotionButton, {backgroundColor: theme.secondary}]}
             activeOpacity={0.5}
             onPress={() => setSelectedEmotion(8)}
@@ -475,7 +304,7 @@ export default function ChatbotScreen({ navigation }, props) {
             <Text style={styles(theme).buttonText}>Tired</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={(selectedEmotion == 9) ? [styles(theme).selectedEmotionButton, {borderColor: wrapperColor, backgroundColor: theme.secondary,}]
+            style={(selectedEmotion == 9) ? [styles(theme).selectedEmotionButton, {borderColor: theme.font, backgroundColor: theme.secondary,}]
                                           : [styles(theme).emotionButton, {backgroundColor: theme.secondary}]}
             activeOpacity={0.5}
             onPress={() => setSelectedEmotion(9)}
@@ -524,7 +353,7 @@ const styles = (theme) => StyleSheet.create({
     lineHeight: 30,
   },
   emotionContainer: { 
-    marginBottom: -170,
+    marginBottom: -150,
     marginTop: -40,
     borderRadius: 10,
     display: "flex",

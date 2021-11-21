@@ -14,7 +14,6 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [theme, setTheme] = useState(null);
     const [saveMessageHistory, setSaveMessageHistory] = useState(null);
-    const [showEmotions, setShowEmotions] = useState(null);
 
     return (
         <AuthContext.Provider
@@ -25,8 +24,6 @@ export const AuthProvider = ({ children }) => {
                 setTheme,
                 saveMessageHistory,
                 setSaveMessageHistory,
-                showEmotions,
-                setShowEmotions,
                 login: async (email, password) => {
                     try {
                         await firebase.auth().signInWithEmailAndPassword(email, password);  // sign in
@@ -51,7 +48,6 @@ export const AuthProvider = ({ children }) => {
                                 email: currentUser.email,
                                 name: name,
                                 saveMessageHistory: true,
-                                showEmotions: true,
                                 theme: {
                                     background: "#EBEBEB",
                                     font: "#000000",
