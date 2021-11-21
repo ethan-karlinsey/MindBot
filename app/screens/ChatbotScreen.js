@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import { GiftedChat, Bubble } from "react-native-gifted-chat";
 import {
   StatusBar, 
@@ -16,6 +16,7 @@ import { useCollectionData } from "react-firebase-hooks/firestore";
 import { AuthContext } from "../navigation/AuthProvider";
 import synchronousTrait from "../firebase/synchronousTrait.js"
 
+// All of the images for the emotions
 let emotionImages = [
   require("../assets/emotions/happy.png"),
   require("../assets/emotions/sad.png"),
@@ -28,6 +29,7 @@ let emotionImages = [
   require("../assets/emotions/tired.png"),
 ];
 
+// The default conversation starters
 const letsChatMessages = [
   "How are you doing today?",
   "Hey, how's it going?",
@@ -39,6 +41,7 @@ const letsChatMessages = [
   "What’s new with you?",
 ];
 
+// The default kind messages
 const kindMessages = [
   "You are loved and appreciated",
   "You are amazing just the way you are",
@@ -47,6 +50,7 @@ const kindMessages = [
   "You are great",
 ];
 
+// The list of the different emotions
 const emotions = [
   "Happy",
   "Sad",
@@ -60,38 +64,39 @@ const emotions = [
   "None",
 ];
 
-const wait = (timeout) => {
-  return new Promise((resolve) => setTimeout(resolve, timeout));
-};
-
 export default function ChatbotScreen() {
-  const currentMessage = synchronousTrait(null);
-  const { user, theme } = useContext(AuthContext);
-  const db = firebase.firestore();
-  const chatsRef = db.collection(user.uid);
-  const query = chatsRef.orderBy("createdAt", "desc");
-  const [messages] = useCollectionData(query, { idField: "id" });
-  const [showBubbles, setShowBubbles] = useState(true);
-  const [selectedEmotion, setSelectedEmotion] = useState(0);
+  const currentMessage = synchronousTrait(null); // The current message to be sent
+  const { user, theme } = useContext(AuthContext); // The user as well as their theme settings
+  const db = firebase.firestore(); // The database being connected to
+  const chatsRef = db.collection(user.uid); // The reference to the messages made by and to the specific user in the database
+  const query = chatsRef.orderBy("createdAt", "desc"); // The messages sorted in descending order by date created
+  const [messages] = useCollectionData(query, { idField: "id" }); // All of the messages in the query
+  const [selectedEmotion, setSelectedEmotion] = useState(0); // The emotion selected by the user
 
+  // This function sends messages from the user to the database
+  // Parameters:
+  // input: The message being sent
   const sendMessage = (input) => {
 
+    // Used so message is set before sending, without it the message may send without it being updated first
     const messageToSend = currentMessage.set(input);
 
+    // Adding the message with fields to the chat reference
     chatsRef.add({
-      _id: messageToSend[0]._id,
-      text: messageToSend[0].text,
-      createdAt: Date.parse(messageToSend[0].createdAt),
-      emotionIndex: selectedEmotion,
-      emotion: emotions[selectedEmotion],
+      _id: messageToSend[0]._id, // The id of the message
+      text: messageToSend[0].text, // The message being send
+      createdAt: Date.parse(messageToSend[0].createdAt), // The date the message was send
+      emotionIndex: selectedEmotion, // The emotion index being send
+      emotion: emotions[selectedEmotion], // The actual emotion being sent
       user: {
-        _id: user.uid,
-        name: user.displayName,
+        _id: user.uid, // The user id
+        name: user.displayName, // The users name
       },
     });
     currentMessage.set(null);
   };
 
+  // Determines how message text is rendered
   const createCustom = (props) => {
     const { currentMessage } = props;
     const { text: currText } = currentMessage;
@@ -100,7 +105,9 @@ export default function ChatbotScreen() {
     );
   };
 
+  // Determines the emotion that is rended with the message
   const createAvatar = (messageInfo) => {
+
     // If the emotion the user selects is "None"
     if (messageInfo.currentMessage.emotionIndex == emotionImages.length) {
       return null;
@@ -111,6 +118,7 @@ export default function ChatbotScreen() {
     }
   };
 
+  // Creates the chat bubbles for each message
   const createBubble = (messages) => {
     return (
       <Bubble
@@ -144,6 +152,7 @@ export default function ChatbotScreen() {
     );
   };
 
+  // Sends conversation starter to the user from MindBot when the "Start a conversation" button is clicked
   const sendLetsChat = () => {
     const randomId = Math.random().toString(36).substring(2);
 
@@ -162,6 +171,7 @@ export default function ChatbotScreen() {
     });
   };
 
+  // Sends kind message to the user from MindBot when the "Receive a kind message" button is clicked
   const sendKindMessage = () => {
     const randomId = Math.random().toString(36).substring(2);
 
@@ -179,6 +189,7 @@ export default function ChatbotScreen() {
   };
 
 
+  // Renders all elements of the page
   return (
     <View style=
       {{flex: 1,
@@ -200,28 +211,28 @@ export default function ChatbotScreen() {
           <Text style={styles(theme).chatButtonText}>Receive a kind message</Text>
         </TouchableOpacity>
       </View>
-      {showBubbles ? (
-        <GiftedChat
-          messages={messages}
-          user={{
-            _id: user.uid,
-            name: user.displayName,
-          }}
-          onSend={(messages) => {
-            Keyboard.dismiss();
-            sendMessage(messages);
-          }}
-          renderAvatar={(messages) => createAvatar(messages)}
-          renderMessageText={(messages) => createCustom(messages)}
-          showUserAvatar={true}
-          showAvatarForEveryMessage={true}
-          renderAllAvatars={true}
-          renderBubble={(messages) => createBubble(messages)}
-          alwaysShowSend={true}
-        />
-      ) : null}
+      <GiftedChat /* All of the chat messages and message input */
+        messages={messages}
+        user={{
+          _id: user.uid,
+          name: user.displayName,
+        }}
+        onSend={(messages) => {
+          Keyboard.dismiss();
+          sendMessage(messages);
+        }}
+        renderAvatar={(messages) => createAvatar(messages)}
+        renderMessageText={(messages) => createCustom(messages)}
+        showUserAvatar={true}
+        showAvatarForEveryMessage={true}
+        renderAllAvatars={true}
+        renderBubble={(messages) => createBubble(messages)}
+        alwaysShowSend={true}
+      />
       <View>
-        <View style={styles(theme).emotionContainer}>
+        <View style={styles(theme).emotionContainer} /* For all emotions if it is the selected one render a border color on it to distinguish it.
+        Theme is from the users settings that they can change in the settings page */
+        >
           <TouchableOpacity
             style={(selectedEmotion == 0) ? [styles(theme).selectedEmotionButton, {borderColor: theme.font, backgroundColor: theme.secondary,}]
                                           : [styles(theme).emotionButton, {backgroundColor: theme.secondary}]}
@@ -317,6 +328,7 @@ export default function ChatbotScreen() {
   );
 }
 
+// All of the stylesheets
 const styles = (theme) => StyleSheet.create({
   chatBotContainer: {
     flex: 1,
