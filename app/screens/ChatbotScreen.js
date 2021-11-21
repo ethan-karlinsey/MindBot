@@ -248,7 +248,21 @@ export default function ChatbotScreen({ navigation }, props) {
       justifyContent: 'center',
       backgroundColor: chatBackgroundColor,
     }}>
-      <Header
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: chatHeaderColor }]}
+          onPress={() => sendLetsChat()}
+        >
+          <Text style={[styles.chatButtonText, { backgroundColor: chatHeaderColor }]}>Start a conversation</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: chatHeaderColor }]}
+          onPress={() => sendKindMessage()}
+        >
+          <Text style={[styles.chatButtonText, { backgroundColor: chatHeaderColor }]}>Receive a kind message</Text>
+        </TouchableOpacity>
+      </View>
+      {/* <Header
         backgroundColor={chatHeaderColor}
         leftComponent={{ icon: "west", color: "#fff" }}
         centerComponent={{
@@ -380,7 +394,7 @@ export default function ChatbotScreen({ navigation }, props) {
             <Text style={styles.textStyle}> Close </Text>
           </Pressable>
         </View>
-      </Modal>
+      </Modal> */}
       {showBubbles ? (
         <GiftedChat
           messages={messages}
@@ -523,7 +537,7 @@ const styles = StyleSheet.create({
     lineHeight: 30,
   },
   emotionContainer: { 
-    marginBottom: -170,
+    marginBottom: -150,
     marginTop: -40,
     borderRadius: 10,
     display: "flex",
