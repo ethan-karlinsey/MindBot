@@ -57,7 +57,7 @@ const themes = [
 ];
 
 export default function SettingsScreen({ navigation }) {
-    const { user, theme, setTheme, saveMessageHistory, setSaveMessageHistory, showEmotions, setShowEmotions, logout, deleteAccount } = useContext(AuthContext);
+    const { user, theme, setTheme, saveMessageHistory, setSaveMessageHistory, setReloadChat, logout, deleteAccount } = useContext(AuthContext);
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
@@ -246,9 +246,6 @@ export default function SettingsScreen({ navigation }) {
         setPassword('');
     }
 
-    console.log(user);
-    console.log(theme);
-
     if (loading){
         return (
             <View style={{
@@ -423,7 +420,10 @@ export default function SettingsScreen({ navigation }) {
                             <TouchableOpacity
                                 key={index}
                                 style={[styles(theme).circle, { backgroundColor: colorOptions[index] }]}
-                                onPress={() => { updateTheme(themes[index]) }}
+                                onPress={() => { 
+                                    updateTheme(themes[index]);
+                                    setReloadChat(true); 
+                                }}
                             />
                         ))}
                     </View>
@@ -481,7 +481,6 @@ export default function SettingsScreen({ navigation }) {
         )
     }
 }
-
 
 const styles = (theme) => StyleSheet.create({
     container: {

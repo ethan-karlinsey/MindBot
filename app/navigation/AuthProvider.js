@@ -14,6 +14,7 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [theme, setTheme] = useState(null);
     const [saveMessageHistory, setSaveMessageHistory] = useState(null);
+    const [reloadChat, setReloadChat] = useState(null);
 
     return (
         <AuthContext.Provider
@@ -24,6 +25,8 @@ export const AuthProvider = ({ children }) => {
                 setTheme,
                 saveMessageHistory,
                 setSaveMessageHistory,
+                reloadChat,
+                setReloadChat,
                 login: async (email, password) => {
                     try {
                         await firebase.auth().signInWithEmailAndPassword(email, password);  // sign in
