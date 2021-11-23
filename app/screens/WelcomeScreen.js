@@ -1,28 +1,35 @@
-import { Image, ImageBackground, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { Image, ImageBackground, StyleSheet, View, Text, TouchableHighlight } from 'react-native';
 import React from 'react';
 
 export default function WelcomeScreen({ navigation }) {
     return (
         <ImageBackground 
             style={styles.background}
-            source={require("../assets/background.jpg")} >
+            source={require("../assets/backgrounds/rocks1.jpg")} >
             <View style={styles.logoContainer}>
                 <Image source={require("../assets/logo.png")} style={styles.logo}/>
-                <Text style={styles.logoText} >MIND BOT</Text>
+                <Text style={styles.logoText}>MIND BOT</Text>
             </View>
-            <TouchableOpacity
-                style={styles.loginButton} 
-                onPress={() => navigation.navigate("Login")}>
+            <TouchableHighlight 
+                activeOpacity={0.95}
+                underlayColor={'#7e96fc'}
+                style={styles.loginButton}
+                onPress={() => navigation.navigate("Login")} >
                 <Text style={styles.loginButtonText}>Sign In</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
+            </TouchableHighlight>
+            <TouchableHighlight 
+                activeOpacity={0.95}
+                underlayColor={'#ffffff'}
                 style={styles.registerButton}
-                onPress={() => navigation.navigate("Registration")}>
+                onPress={() => navigation.navigate("Registration")} >
                 <Text style={styles.registerButtonText}>Create Account</Text>
-            </TouchableOpacity>
+            </TouchableHighlight>
         </ImageBackground>
     );
 }
+//#84b0a1 green
+//#a9cfc2 lighter green
+//#788eec blue
 
 const styles = StyleSheet.create({
     background: {
@@ -44,7 +51,7 @@ const styles = StyleSheet.create({
     },
     registerButton: {
         width: "80%",
-        backgroundColor: '#ffffff',
+        backgroundColor: '#f0f0f0',
         marginLeft: 30,
         marginRight: 30,
         marginBottom: 50,

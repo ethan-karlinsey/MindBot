@@ -1,17 +1,19 @@
 import React, { useState, useContext } from 'react'
-import { StyleSheet, Image, Text, TextInput, TouchableOpacity, View, ImageBackground } from 'react-native'
+import { StyleSheet, Image, Text, TextInput, TouchableHighlight, View, ImageBackground } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { AuthContext } from '../navigation/AuthProvider';
 
 export default function LoginScreen({navigation}) {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const { login } = useContext(AuthContext);
+    const [email, setEmail] = useState(''); // used to store email
+    const [password, setPassword] = useState(''); // used to store password
+    const { login } = useContext(AuthContext); // get login function from auth context
 
+    // called when registration link clicked
     const onFooterLinkPress = () => {
         navigation.navigate('Registration');
     }
 
+    // called when login button clicked
     const onLoginPress = () => {
         if (!email) {
             Alert.alert('Email field is required.');
@@ -27,7 +29,7 @@ export default function LoginScreen({navigation}) {
     return (
         <ImageBackground 
             style={styles.container}
-            source={require("../assets/background.jpg")} 
+            source={require("../assets/backgrounds/rocks1.jpg")} 
             blurRadius={5} >
             <KeyboardAwareScrollView
                 style={{ flex: 1, width: '100%' }}
@@ -39,6 +41,7 @@ export default function LoginScreen({navigation}) {
                 <TextInput
                     style={styles.input}
                     placeholder='E-mail'
+                    keyboardType='email-address'
                     placeholderTextColor="#aaaaaa"
                     onChangeText={(text) => setEmail(text)}
                     value={email}
@@ -55,11 +58,13 @@ export default function LoginScreen({navigation}) {
                     underlineColorAndroid="transparent"
                     autoCapitalize="none"
                 />
-                <TouchableOpacity
+                <TouchableHighlight
+                    activeOpacity={0.95}
+                    underlayColor={'#7e96fc'}
                     style={styles.button}
                     onPress={() => onLoginPress()}>
                     <Text style={styles.buttonTitle}>Log in</Text>
-                </TouchableOpacity>
+                </TouchableHighlight>
                 <View style={styles.footerView}>
                     <Text style={styles.footerText}>Don't have an account? <Text onPress={onFooterLinkPress} style={styles.footerLink}>Sign up</Text></Text>
                 </View>
@@ -81,7 +86,7 @@ const styles = StyleSheet.create({
         height: 120,
         width: 120,
         alignSelf: "center",
-        margin: 30
+        margin: 40
     },
     input: {
         height: 48,

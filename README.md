@@ -1,27 +1,20 @@
+# NEATLab
+
 # MindBot
 WWU CSCI 490 series senior project
 
-To run this app you will need to have expo installed. Follow the instillation tutorial here: https://docs.expo.io/get-started/installation/
+To run this app you will need to have expo and Node.js installed. 
+Follow the instillation tutorial here for expo: https://docs.expo.io/get-started/installation/
+Installing emulator: https://docs.expo.dev/workflow/android-studio-emulator/ (android) https://docs.expo.dev/workflow/ios-simulator/ (ios)
+Node.js installation: https://nodejs.dev/
+
 This project was initialized using the "expo init MindBot" command. To set up this project on your own device, initialize your own app with the "expo init MindBot" command, and choose the blank template. After setting the remote origin to this repository, replace the template files with the repository files using the following commands:
 
 git fetch origin
 git reset --hard origin/main
 
-Here are some extra expo packages you will need to install:
+Install yarn: npm install yarn
 
-expo install firebase react-native-gifted-chat @react-native-community/async-storage
+To install dependencies: yarn install
 
-expo install @react-navigation/native @react-navigation/stack react-native-keyboard-aware-scroll-view
-
-expo install react-native-gesture-handler react-native-reanimated react-native-screens react-native-safe-area-context @react-native-community/masked-view
-
-expo install modal
-expo install modal-react-native-web
-
-expo install @react-navigation/native @react-navigation/stack
-
-expo install react-native-elements
-
-expo install firebase react-firebase-hooks
-
-
+To run the project: expo start

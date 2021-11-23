@@ -1,314 +1,640 @@
-import React, { useState, useContext, useLayoutEffect } from 'react';
-import { GiftedChat, Bubble } from 'react-native-gifted-chat';
-import { StyleSheet, View, Image, Text, Keyboard, TouchableOpacity, Button } from 'react-native';
-import { Avatar } from "react-native-elements";
-import firebase from 'firebase';
-import 'firebase/firestore';
-import { useCollectionData } from 'react-firebase-hooks/firestore';
-import Modal from './Modal.js';
-import { AuthContext } from '../navigation/AuthProvider';
+	import React, { useState, useContext, useEffect } from "react";
+	import { GiftedChat, Bubble } from "react-native-gifted-chat";
+	import {
+	StatusBar,
+	StyleSheet,
+	View,
+	Image,
+	Text,
+	Keyboard,
+	TouchableOpacity,
+	ActivityIndicator,
+	} from "react-native";
+	import { Avatar } from "react-native-elements";
+	import firebase from "firebase";
+	import "firebase/firestore";
+	import { useCollectionData } from "react-firebase-hooks/firestore";
+	import { AuthContext } from "../navigation/AuthProvider";
+	import synchronousTrait from "../firebase/synchronousTrait.js";
 
-let emotionImages = [
-    require('../assets/emotions/happy.png'),
-    require('../assets/emotions/sad.png'),
-    require('../assets/emotions/angry.png'),
-    require('../assets/emotions/crying.png'),
-    require('../assets/emotions/laugh.png'),
-    require('../assets/emotions/nervous.png'),
-    require('../assets/emotions/surprised.png'),
-    require('../assets/emotions/confused.png'),
-    require('../assets/emotions/tired.png'),
-  ];
+	// All of the images for the emotions
+	let emotionImages = [
+		require("../assets/emotions/happy.png"),
+		require("../assets/emotions/sad.png"),
+		require("../assets/emotions/angry.png"),
+		require("../assets/emotions/crying.png"),
+		require("../assets/emotions/laugh.png"),
+		require("../assets/emotions/nervous.png"),
+		require("../assets/emotions/surprised.png"),
+		require("../assets/emotions/confused.png"),
+		require("../assets/emotions/tired.png"),
+	];
 
-const letsChatMessages = [
-  "How are you doing today?",
-  "Hey, how's it going?",
-  "How are you feeling?",
-  "How was your day?",
-  "How have you been?",
-  "What have you been up to?",
-  "How's everyting going?",
-  "What’s new with you?",
-];
+	// The default conversation starters
+	const letsChatMessages = [
+		"How are you doing today?",
+		"Hey, how's it going?",
+		"How are you feeling?",
+		"How was your day?",
+		"How have you been?",
+		"What have you been up to?",
+		"How's everything going?",
+		"What’s new with you?",
+	];
 
-const kindMessages = [
-  "You are loved and appreciated",
-  "You are amazing just the way you are",
-  "You can acomplish anything you put your mind to",
-  "You are braver than you believe, stronger than you seem, and smarter than you think",
-  "You are great",
-];
+	// The default kind messages
+	const kindMessages = [
+		"You are loved and appreciated",
+		"You are amazing just the way you are",
+		"You can accomplish anything you put your mind to",
+		"You are braver than you believe, stronger than you seem, and smarter than you think",
+		"You are great",
+	];
 
-const emotions = ['Happy', 'Sad', 'Angry', 'Crying', 'Laughing', 'Nervous', 'Surprised', 'Confused', 'Tired', 'None'];
+	// The list of the different emotions
+	const emotions = [
+		"Happy",
+		"Sad",
+		"Angry",
+		"Crying",
+		"Laughing",
+		"Nervous",
+		"Surprised",
+		"Confused",
+		"Tired",
+		"None",
+	];
 
-export default function ChatbotScreen({ navigation }, props) {
-  
-  const [currentMessage, setCurrentMessage] = useState(null);
-  const [showEmotions, setShowEmotions] = useState(false);
-  const { user } = useContext(AuthContext);
-  const db = firebase.firestore();
-  const chatsRef = db.collection(user.uid);
-  const query = chatsRef.orderBy('createdAt', 'desc');
-  const [messages] = useCollectionData(query, { idField: 'id' });
-  const [id, setId] = useState('');
-  const [name, setName] = useState('');
+	export default function ChatbotScreen() {
+	const currentMessage = synchronousTrait(null); // The current message to be sent
+	const { user, theme, reloadChat, setReloadChat } = useContext(AuthContext); // The user as well as their theme settings
+	const db = firebase.firestore(); // The database being connected to
+	const chatsRef = db.collection(user.uid); // The reference to the messages made by and to the specific user in the database
+	const query = chatsRef.orderBy("createdAt", "desc"); // The messages sorted in descending order by date created
+	const [messages] = useCollectionData(query, { idField: "id" }); // All of the messages in the query
+	const [selectedEmotion, setSelectedEmotion] = useState(0); // The emotion selected by the user
+	const [loading, setLoading] = useState(null);
 
-  useLayoutEffect(() => {
-        let isMounted = true;
-        async function getUserInfo() {
-            try {
-                let doc = await firebase
-                    .firestore()
-                    .collection('users')
-                    .doc(user.uid)
-                    .get();
-
-                if (!doc.exists) {
-                    console.log('User data not found');
-                } else {
-                    let data = doc.data();
-                    if (isMounted) {
-                      setName(data.name);
-                      setId(data._id);
-                    } 
-                }
-            } catch (error) {
-                console.log(error);
-            }
-        }
-        getUserInfo();
-        return () => { isMounted = false }
-    })
-
-  const sendMessage = (index) => {
-
-    chatsRef.add({
-      _id: currentMessage[0]._id,
-      text: currentMessage[0].text,
-      createdAt: Date.parse(currentMessage[0].createdAt),
-      emotionIndex: index,
-      emotion: emotions[index],
-      user: {
-        _id: id,
-        name: name
-      }
-    })
-    setCurrentMessage(null);
-  }
-
-  const createAvatar = (messageInfo) => {
-
-    // If the emotion the user selects is "None"
-    if (messageInfo.currentMessage.emotionIndex == emotionImages.length) {
-      return null;
-
-    } else {
-
-      var emotionImage = emotionImages[messageInfo.currentMessage.emotionIndex];
-
-      return(
-        <Avatar
-          rounded
-          size = 'medium'
-          source = {emotionImage}
-        ></Avatar>
-      )
+	const reload = async (time) => {
+        setLoading(true)
+        await setTimeout(() => {
+            setLoading(false);
+        }, time);
     }
-  }
 
-  const createBubble = (messages) => {
+	useEffect(() => {
+		if (reloadChat) {
+			reload(500);
+			setReloadChat(false);
+		}
+	});
 
-    return (
-      <Bubble
-        {... messages}
+	// This function sends messages from the user to the database
+	// Parameters:
+	// input: The message being sent
+	const sendMessage = (input) => {
+		// Used so message is set before sending, without it the message may send without it being updated first
+		const messageToSend = currentMessage.set(input);
 
-        textStyle={{
-          right: {
-            color: 'black',
-          },
-          left: {
-            color: 'black',
-          },
-        }}
+		// Adding the message with fields to the chat reference
+		chatsRef.add({
+			_id: messageToSend[0]._id, // The id of the message
+			text: messageToSend[0].text, // The message being send
+			createdAt: Date.parse(messageToSend[0].createdAt), // The date the message was send
+			emotionIndex: selectedEmotion, // The emotion index being send
+			emotion: emotions[selectedEmotion], // The actual emotion being sent
+			user: {
+				_id: user.uid, // The user id
+				name: user.displayName, // The users name
+			},
+		});
+		currentMessage.set(null);
+	};
 
-        timeTextStyle={{
-          left: { 
-             color: 'black' 
-          },
-          right: { 
-            color:'black'
-          } 
-        }}
+	// Determines how message text is rendered
+	const createCustom = (props) => {
+		const { currentMessage } = props;
+		const { text: currText } = currentMessage;
+		return (
+			<Text style={{ color: theme.font, fontSize: 12, padding: 5 }}>
+				{" "}
+				{currText}
+			</Text>
+		);
+	};
 
-        wrapperStyle={{
-          left: {
-            backgroundColor: '#F2AE6F',
-          },
-          right: {
-            backgroundColor: '#99BBFF'
-          },
-        }}
+	// Determines the emotion that is rended with the message
+	const createAvatar = (messageInfo) => {
+		// If the emotion the user selects is "None"
+		if (messageInfo.currentMessage.emotionIndex == emotionImages.length) {
+		return null;
+		} else {
+		var emotionImage = emotionImages[messageInfo.currentMessage.emotionIndex];
 
-        user={messages.currentMessage.user}
-      />
-    )
-  }
+		return (
+			<Avatar
+				rounded
+				size="medium"
+				source={emotionImage}
+				backgroundColor={theme.secondary}
+			></Avatar>
+		);
+		}
+	};
 
-  const getEmotion = (index) => {
+	// Creates the chat bubbles for each message
+	const createBubble = (messages) => {
+		return (
+		<Bubble
+			{...messages}
+			textStyle={{
+				right: {
+					color: theme.font,
+				},
+				left: {
+					color: theme.font,
+				},
+			}}
+			timeTextStyle={{
+				left: {
+					color: theme.font,
+				},
+				right: {
+					color: theme.font,
+				},
+			}}
+			wrapperStyle={{
+				left: {
+					backgroundColor: theme.primary,
+				},
+				right: {
+					backgroundColor: theme.primary,
+				},
+			}}
+			user={messages.currentMessage.user}
+		/>
+		);
+	};
 
-    setShowEmotions(false);
-    sendMessage(index);
-  }
+	// Sends conversation starter to the user from MindBot when the "Start a conversation" button is clicked
+	const sendLetsChat = () => {
+		const randomId = Math.random().toString(36).substring(2);
 
-  const sendLetsChat = () => {
+		chatsRef.add({
+			_id: randomId,
+			text: letsChatMessages[
+				Math.floor(Math.random() * letsChatMessages.length)
+			],
+			createdAt: new Date().getTime(),
+			emotionIndex: 0,
+			emotion: emotions[0],
+			user: {
+				_id: "NICUiyNjJBRQHccSDjRvZzOi3Pj2",
+				name: "MindBot",
+			},
+		});
+	};
 
-    const randomId = Math.random().toString(36).substring(2);
+	// Sends kind message to the user from MindBot when the "Receive a kind message" button is clicked
+	const sendKindMessage = () => {
+		const randomId = Math.random().toString(36).substring(2);
 
-    chatsRef.add({
-      _id: randomId,
-      text: letsChatMessages[Math.floor(Math.random() * letsChatMessages.length)],
-      createdAt: new Date().getTime(),
-      emotionIndex: 0,
-      emotion: emotions[0],
-      user: {
-        _id: 'NICUiyNjJBRQHccSDjRvZzOi3Pj2',
-        name: 'MindBot'
-      }
-    })
-  }
+		chatsRef.add({
+		_id: randomId,
+		text: kindMessages[Math.floor(Math.random() * kindMessages.length)],
+		createdAt: new Date().getTime(),
+		emotionIndex: 0,
+		emotion: emotions[0],
+		user: {
+			_id: "NICUiyNjJBRQHccSDjRvZzOi3Pj2",
+			name: "MindBot",
+		},
+		});
+	};
 
-  const sendKindMessage = () => {
+	if (loading) {
+		return (
+		<View
+			style={{
+			flex: 1,
+			alignItems: "center",
+			justifyContent: "center",
+			}}
+		>
+			<StatusBar
+			backgroundColor={theme.background}
+			barStyle={theme.statusBar}
+			/>
+			<ActivityIndicator size="large" color="#6646ee" />
+		</View>
+		);
+	} else {
+		// Renders all elements of the page
+		return (
+		<View
+			style={{
+			flex: 1,
+			justifyContent: "center",
+			backgroundColor: theme.background,
+			}}
+		>
+			<StatusBar
+			backgroundColor={theme.background}
+			barStyle={theme.statusBar}
+			/>
+			<View style={styles(theme).buttonContainer}>
+			<TouchableOpacity
+				style={styles(theme).headerButton}
+				onPress={() => sendLetsChat()}
+			>
+				<Text style={styles(theme).chatButtonText}>
+				Start a conversation
+				</Text>
+			</TouchableOpacity>
+			<TouchableOpacity
+				style={styles(theme).headerButton}
+				onPress={() => sendKindMessage()}
+			>
+				<Text style={styles(theme).chatButtonText}>
+				Receive a kind message
+				</Text>
+			</TouchableOpacity>
+			</View>
+			<GiftedChat /* All of the chat messages and message input */
+			messages={messages}
+			user={{
+				_id: user.uid,
+				name: user.displayName,
+			}}
+			onSend={(messages) => {
+				Keyboard.dismiss();
+				sendMessage(messages);
+			}}
+			renderAvatar={(messages) => createAvatar(messages)}
+			renderMessageText={(messages) => createCustom(messages)}
+			showUserAvatar={true}
+			showAvatarForEveryMessage={true}
+			renderAllAvatars={true}
+			renderBubble={(messages) => createBubble(messages)}
+			alwaysShowSend={true}
+			/>
+			<View>
+			<View
+				style={
+				styles(theme).emotionContainer
+				} /* For all emotions if it is the selected one render a border color on it to distinguish it.
+			Theme is from the users settings that they can change in the settings page */
+			>
+				<TouchableOpacity
+				style={
+					selectedEmotion == 0
+					? [
+						styles(theme).selectedEmotionButton,
+						{
+							borderColor: theme.font,
+							backgroundColor: theme.secondary,
+						},
+						]
+					: [
+						styles(theme).emotionButton,
+						{ backgroundColor: theme.secondary },
+						]
+				}
+				activeOpacity={0.5}
+				onPress={() => setSelectedEmotion(0)}
+				>
+				<Image
+					style={styles(theme).buttonImage}
+					source={emotionImages[0]}
+				/>
+				<Text style={styles(theme).buttonText}>Happy</Text>
+				</TouchableOpacity>
+				<TouchableOpacity
+				style={
+					selectedEmotion == 1
+					? [
+						styles(theme).selectedEmotionButton,
+						{
+							borderColor: theme.font,
+							backgroundColor: theme.secondary,
+						},
+						]
+					: [
+						styles(theme).emotionButton,
+						{ backgroundColor: theme.secondary },
+						]
+				}
+				activeOpacity={0.5}
+				onPress={() => setSelectedEmotion(1)}
+				>
+				<Image
+					style={styles(theme).buttonImage}
+					source={emotionImages[1]}
+				/>
+				<Text style={styles(theme).buttonText}>Sad</Text>
+				</TouchableOpacity>
+				<TouchableOpacity
+				style={
+					selectedEmotion == 2
+					? [
+						styles(theme).selectedEmotionButton,
+						{
+							borderColor: theme.font,
+							backgroundColor: theme.secondary,
+						},
+						]
+					: [
+						styles(theme).emotionButton,
+						{ backgroundColor: theme.secondary },
+						]
+				}
+				activeOpacity={0.5}
+				onPress={() => setSelectedEmotion(2)}
+				>
+				<Image
+					style={styles(theme).buttonImage}
+					source={emotionImages[2]}
+				/>
+				<Text style={styles(theme).buttonText}>Angry</Text>
+				</TouchableOpacity>
+				<TouchableOpacity
+				style={
+					selectedEmotion == 3
+					? [
+						styles(theme).selectedEmotionButton,
+						{
+							borderColor: theme.font,
+							backgroundColor: theme.secondary,
+						},
+						]
+					: [
+						styles(theme).emotionButton,
+						{ backgroundColor: theme.secondary },
+						]
+				}
+				activeOpacity={0.5}
+				onPress={() => setSelectedEmotion(3)}
+				>
+				<Image
+					style={styles(theme).buttonImage}
+					source={emotionImages[3]}
+				/>
+				<Text style={styles(theme).buttonText}>Crying</Text>
+				</TouchableOpacity>
+				<TouchableOpacity
+				style={
+					selectedEmotion == 4
+					? [
+						styles(theme).selectedEmotionButton,
+						{
+							borderColor: theme.font,
+							backgroundColor: theme.secondary,
+						},
+						]
+					: [
+						styles(theme).emotionButton,
+						{ backgroundColor: theme.secondary },
+						]
+				}
+				activeOpacity={0.5}
+				onPress={() => setSelectedEmotion(4)}
+				>
+				<Image
+					style={styles(theme).buttonImage}
+					source={emotionImages[4]}
+				/>
+				<Text style={styles(theme).buttonText}>Laughing</Text>
+				</TouchableOpacity>
+				<TouchableOpacity
+				style={
+					selectedEmotion == 5
+					? [
+						styles(theme).selectedEmotionButton,
+						{
+							borderColor: theme.font,
+							backgroundColor: theme.secondary,
+						},
+						]
+					: [
+						styles(theme).emotionButton,
+						{ backgroundColor: theme.secondary },
+						]
+				}
+				activeOpacity={0.5}
+				onPress={() => setSelectedEmotion(5)}
+				>
+				<Image
+					style={styles(theme).buttonImage}
+					source={emotionImages[5]}
+				/>
+				<Text style={styles(theme).buttonText}>Nervous</Text>
+				</TouchableOpacity>
+				<TouchableOpacity
+				style={
+					selectedEmotion == 6
+					? [
+						styles(theme).selectedEmotionButton,
+						{
+							borderColor: theme.font,
+							backgroundColor: theme.secondary,
+						},
+						]
+					: [
+						styles(theme).emotionButton,
+						{ backgroundColor: theme.secondary },
+						]
+				}
+				activeOpacity={0.5}
+				onPress={() => setSelectedEmotion(6)}
+				>
+				<Image
+					style={styles(theme).buttonImage}
+					source={emotionImages[6]}
+				/>
+				<Text style={styles(theme).buttonText}>Surprised</Text>
+				</TouchableOpacity>
+				<TouchableOpacity
+				style={
+					selectedEmotion == 7
+					? [
+						styles(theme).selectedEmotionButton,
+						{
+							borderColor: theme.font,
+							backgroundColor: theme.secondary,
+						},
+						]
+					: [
+						styles(theme).emotionButton,
+						{ backgroundColor: theme.secondary },
+						]
+				}
+				activeOpacity={0.5}
+				onPress={() => setSelectedEmotion(7)}
+				>
+				<Image
+					style={styles(theme).buttonImage}
+					source={emotionImages[7]}
+				/>
+				<Text style={styles(theme).buttonText}>Confused</Text>
+				</TouchableOpacity>
+				<TouchableOpacity
+				style={
+					selectedEmotion == 8
+					? [
+						styles(theme).selectedEmotionButton,
+						{
+							borderColor: theme.font,
+							backgroundColor: theme.secondary,
+						},
+						]
+					: [
+						styles(theme).emotionButton,
+						{ backgroundColor: theme.secondary },
+						]
+				}
+				activeOpacity={0.5}
+				onPress={() => setSelectedEmotion(8)}
+				>
+				<Image
+					style={styles(theme).buttonImage}
+					source={emotionImages[8]}
+				/>
+				<Text style={styles(theme).buttonText}>Tired</Text>
+				</TouchableOpacity>
+				<TouchableOpacity
+				style={
+					selectedEmotion == 9
+					? [
+						styles(theme).selectedEmotionButton,
+						{
+							borderColor: theme.font,
+							backgroundColor: theme.secondary,
+						},
+						]
+					: [
+						styles(theme).emotionButton,
+						{ backgroundColor: theme.secondary },
+						]
+				}
+				activeOpacity={0.5}
+				onPress={() => setSelectedEmotion(9)}
+				>
+				<Text style={styles(theme).buttonText}>None</Text>
+				</TouchableOpacity>
+			</View>
+			</View>
+		</View>
+		);
+	}
+	}
 
-    const randomId = Math.random().toString(36).substring(2);
-
-    chatsRef.add({
-      _id: randomId,
-      text: kindMessages[Math.floor(Math.random() * kindMessages.length)],
-      createdAt: new Date().getTime(),
-      emotionIndex: 0,
-      emotion: emotions[0],
-      user: {
-        _id: 'NICUiyNjJBRQHccSDjRvZzOi3Pj2',
-        name: 'MindBot'
-      }
-    })
-  }
-
-  return (
-          <View style={styles.chatBotContainer}>
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity
-                style={styles.button}
-                onPress={() => sendLetsChat()}
-              >
-                <Text style={styles.chatButtonText}>Let's Chat</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.button}
-                onPress={() => sendKindMessage()}
-              >
-                <Text style={styles.chatButtonText}>Send a kind message</Text>
-              </TouchableOpacity>
-            </View>
-            <GiftedChat
-              messages={messages}
-              user={{
-                _id: id,
-                name: name
-              }}
-              onSend={(messages) => {Keyboard.dismiss(); setCurrentMessage(messages); setShowEmotions(true);}}
-              renderAvatar={(messages) => createAvatar(messages)}
-              showUserAvatar={true}
-              showAvatarForEveryMessage={true}
-              renderAllAvatars={true}
-              renderBubble={(messages) => createBubble(messages)}
-              alwaysShowSend={true}
-            />
-            <Modal transparent={true} visible={showEmotions}>
-              <View style={{backgroundColor:"#000000aa", flex:1}}>
-                <View style={styles.emotionPopUp}>
-                  <Text style={{textAlign: 'center'}}>Select an emotion for your message</Text>
-                  <View style={styles.emotionContainer}>
-                    <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(0)}><Image style={styles.buttonImage} source={emotionImages[0]}/><Text style={styles.buttonText}>Happy</Text></TouchableOpacity>
-                    <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(1)}><Image style={styles.buttonImage} source={emotionImages[1]}/><Text style={styles.buttonText}>Sad</Text></TouchableOpacity>
-                    <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(2)}><Image style={styles.buttonImage} source={emotionImages[2]}/><Text style={styles.buttonText}>Angry</Text></TouchableOpacity>
-                    <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(3)}><Image style={styles.buttonImage} source={emotionImages[3]}/><Text style={styles.buttonText}>Crying</Text></TouchableOpacity>
-                    <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(4)}><Image style={styles.buttonImage} source={emotionImages[4]}/><Text style={styles.buttonText}>Laughing</Text></TouchableOpacity>
-                    <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(5)}><Image style={styles.buttonImage} source={emotionImages[5]}/><Text style={styles.buttonText}>Nervous</Text></TouchableOpacity>
-                    <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(6)}><Image style={styles.buttonImage} source={emotionImages[6]}/><Text style={styles.buttonText}>Surprised</Text></TouchableOpacity>
-                    <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(7)}><Image style={styles.buttonImage} source={emotionImages[7]}/><Text style={styles.buttonText}>Confused</Text></TouchableOpacity>
-                    <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(8)}><Image style={styles.buttonImage} source={emotionImages[8]}/><Text style={styles.buttonText}>Tired</Text></TouchableOpacity>
-                    <TouchableOpacity style={styles.emotionButton} activeOpacity={0.5} onPress={() => getEmotion(9)}><Text style={styles.buttonText}>None</Text></TouchableOpacity>
-                  </View>
-                </View>
-              </View>
-            </Modal>
-          </View>
-        )
-};
-
-const styles = StyleSheet.create({
-  chatBotContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    backgroundColor: '#E5E5E5',
-  },
-  buttonContainer: {
-    justifyContent: 'center', 
-    flexDirection: "row",
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    marginTop: 30,
-  },
-  button: {
-    width: '40%',
-    height: 50,
-    borderRadius: 20,
-    backgroundColor: "#61dafb",
-  },
-  chatButtonText: {
-    justifyContent: 'center',
-    textAlign: 'center',
-    fontWeight: 'bold',
-    lineHeight: 50,
-  },
-  emotionPopUp: {
-    backgroundColor: "#ffffff",
-    flex: 1,
-    display: 'flex',
-    flexWrap: 'wrap',
-    alignContent: 'center',
-    justifyContent: 'center',
-  },
-  emotionContainer: {
-    marginTop: 10,
-    marginBottom: 10,
-    borderRadius: 10,
-    display: 'flex',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    alignContent: 'center',
-    justifyContent: 'center'
-  },
-  emotionButton: {
-    marginVertical: 10,
-    marginHorizontal: 10,
-    borderRadius: 10,
-    padding: 10,
-    backgroundColor: '#f0f8ff',
-    justifyContent: 'center',
-    alignItems: 'center',
-    minWidth: "35%",
-    height: 100
-  },
-  buttonText: {
-    textAlign: 'center',
-    fontWeight: 'bold',
-    fontSize: 14,
-    margin: 5
-  },
-  buttonImage: {
-    width: 50,
-    height: 50,
-  }
-});
+	// All of the stylesheets
+	const styles = (theme) =>
+	StyleSheet.create({
+		chatBotContainer: {
+			flex: 1,
+			justifyContent: "center",
+			backgroundColor: "#E5E5E5",
+		},
+		buttonContainer: {
+			marginTop: 10,
+			padding: 5,
+			justifyContent: "center",
+			flexDirection: "row",
+			justifyContent: "center",
+			alignItems: "center",
+		},
+		headerButton: {
+			backgroundColor: theme.primary,
+			height: 50,
+			width: 185,
+			padding: 8,
+			marginHorizontal: 5,
+			borderRadius: 15,
+		},
+		button: {
+			backgroundColor: theme.primary,
+			width: "40%",
+			height: 50,
+			borderRadius: 20,
+		},
+		chatButtonText: {
+			color: theme.font,
+			justifyContent: "center",
+			textAlign: "center",
+			fontWeight: "bold",
+			lineHeight: 30,
+		},
+		emotionContainer: {
+			marginBottom: "-43%",
+			marginTop: "-10%",
+			borderRadius: 10,
+			display: "flex",
+			flexDirection: "row",
+			flexWrap: "wrap",
+			alignContent: "flex-end",
+			justifyContent: "center",
+		},
+		emotionButton: {
+			marginVertical: 3,
+			marginHorizontal: 3,
+			marginBottom: 0,
+			borderRadius: 10,
+			justifyContent: "center",
+			alignItems: "center",
+			width: "18%",
+			height: "35%",
+		},
+		selectedEmotionButton: {
+			marginVertical: 3,
+			marginHorizontal: 3,
+			marginBottom: 0,
+			borderRadius: 10,
+			backgroundColor: "#c3daf3",
+			justifyContent: "center",
+			alignItems: "center",
+			width: "18%",
+			height: "35%",
+			borderStyle: "solid",
+			borderWidth: 5,
+		},
+		buttonText: {
+			textAlign: "center",
+			fontWeight: "bold",
+			fontSize: 14,
+		},
+		buttonImage: {
+			width: 30,
+			height: 30,
+		},
+		button: {
+			borderRadius: 20,
+			padding: 10,
+			elevation: 2,
+		},
+		buttonOpen: {
+			backgroundColor: "#F194FF",
+		},
+		buttonClose: {
+			backgroundColor: "#2196F3",
+		},
+		textStyle: {
+			color: "white",
+			fontWeight: "bold",
+			textAlign: "center",
+		},
+		modalText: {
+			marginBottom: 15,
+			fontSize: 18,
+			textAlign: "center",
+		},
+		circle: {
+			width: 24,
+			height: 24,
+			borderRadius: 34 / 2,
+			backgroundColor: "red",
+			borderColor: "black",
+			borderWidth: 3,
+			margin: 5,
+		},
+	});

@@ -1,20 +1,22 @@
 import React, { useState, useContext } from 'react'
-import { StyleSheet, Image, Text, TextInput, TouchableOpacity, View, ImageBackground } from 'react-native'
+import { StyleSheet, Image, Text, TextInput, TouchableHighlight, View, ImageBackground } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { AuthContext } from '../navigation/AuthProvider';
 
 export default function RegistrationScreen({navigation}) {
-    const [name, setName] = useState('')
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [confirmPassword, setConfirmPassword] = useState('')
-    const { register } = useContext(AuthContext);
+    const [name, setName] = useState(''); // used to store name 
+    const [email, setEmail] = useState(''); // used to store email
+    const [password, setPassword] = useState(''); // used to store password
+    const [confirmPassword, setConfirmPassword] = useState(''); // used to confirm password
+    const { register, setTheme } = useContext(AuthContext); // get register and setTheme functions from authcontext
 
+    // called when login link pressed
     const onFooterLinkPress = () => {
         navigation.navigate('Login');
     }
 
-    const onRegisterPress = () => {
+    // called when register button pressed
+    const onRegisterPress = async () => {
         if (!name) {
             Alert.alert('Name is required.');
         } else if (!email) {
@@ -25,7 +27,15 @@ export default function RegistrationScreen({navigation}) {
             Alert.alert("Passwords don't match");
             return
         } else {
-            register(email, password, name);
+            register(email, password, name); // register account
+            setTheme({ // set to default theme
+                statusBar: 'dark-content',
+                background: "#EBEBEB",
+                font: "#000000",
+                primary: "#FFFFFF",
+                secondary: "#8C8C8C",
+                tertiary: "#E3E3E3"
+            });
             setName('');
             setEmail('');
             setPassword('');
@@ -36,7 +46,7 @@ export default function RegistrationScreen({navigation}) {
     return (
         <ImageBackground 
             style={styles.container}
-            source={require("../assets/background.jpg")} 
+            source={require("../assets/backgrounds/rocks1.jpg")} 
             blurRadius={5}  >
             <KeyboardAwareScrollView
                 style={{ flex: 1, width: '100%' }}
@@ -56,6 +66,7 @@ export default function RegistrationScreen({navigation}) {
                 />
                 <TextInput
                     style={styles.input}
+                    keyboardType='email-address'
                     placeholder='E-mail'
                     placeholderTextColor="#aaaaaa"
                     onChangeText={(text) => setEmail(text)}
@@ -67,7 +78,7 @@ export default function RegistrationScreen({navigation}) {
                     style={styles.input}
                     placeholderTextColor="#aaaaaa"
                     secureTextEntry
-                    placeholder='Password (At least 6 characters)'
+                    placeholder='Password'
                     onChangeText={(text) => setPassword(text)}
                     value={password}
                     underlineColorAndroid="transparent"
@@ -77,17 +88,19 @@ export default function RegistrationScreen({navigation}) {
                     style={styles.input}
                     placeholderTextColor="#aaaaaa"
                     secureTextEntry
-                    placeholder='Confirm Password (At least 6 characters)'
+                    placeholder='Confirm Password'
                     onChangeText={(text) => setConfirmPassword(text)}
                     value={confirmPassword}
                     underlineColorAndroid="transparent"
                     autoCapitalize="none"
                 />
-                <TouchableOpacity
+                <TouchableHighlight
+                    activeOpacity={0.95}
+                    underlayColor={'#7e96fc'}
                     style={styles.button}
                     onPress={() => onRegisterPress()}>
                     <Text style={styles.buttonTitle}>Create account</Text>
-                </TouchableOpacity>
+                </TouchableHighlight>
                 <View style={styles.footerView}>
                     <Text style={styles.footerText}>Already got an account? <Text onPress={onFooterLinkPress} style={styles.footerLink}>Log in</Text></Text>
                 </View>
@@ -109,7 +122,7 @@ const styles = StyleSheet.create({
         height: 120,
         width: 120,
         alignSelf: "center",
-        margin: 30
+        margin: 40
     },
     input: {
         height: 48,

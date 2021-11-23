@@ -6,6 +6,11 @@ import RegistrationScreen from '../screens/RegistrationScreen';
 
 const Stack = createStackNavigator()
 
+/*
+    Authentication Stack:
+    Shown when the user is not authenticated/not signed in
+    Defaults to welcomes screen
+*/
 export default function AuthStack() {
     return (
         <Stack.Navigator screenOptions={{ headerShown: true }}>
