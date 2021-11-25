@@ -5,6 +5,7 @@ export default function WelcomeScreen({ navigation }) {
     return (
         <ImageBackground 
             style={styles.background}
+            blurRadius={0.75}
             source={require("../assets/backgrounds/rocks1.jpg")} >
             <View style={styles.logoContainer}>
                 <Image source={require("../assets/logo.png")} style={styles.logo}/>
