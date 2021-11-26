@@ -28,13 +28,13 @@ export default function RegistrationScreen({navigation}) {
             return
         } else {
             register(email, password, name); // register account
-            setTheme({ // set to default theme
-                statusBar: 'dark-content',
-                background: "#EBEBEB",
+            setTheme({// set to default theme
+                statusBar: "dark-content",
+                background: "#B4B5A9",
                 font: "#000000",
-                primary: "#FFFFFF",
-                secondary: "#8C8C8C",
-                tertiary: "#E3E3E3"
+                primary: "#E4E5D6",
+                secondary: "#FDFDFB",
+                tertiary: "#666666",
             });
             setName('');
             setEmail('');

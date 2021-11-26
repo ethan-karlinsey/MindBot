@@ -10,5 +10,8 @@ npm-debug.*
 web-build/
 .vscode
 
+# firebase config
+app/firebase/config.js
+
 # macOS
 .DS_Store

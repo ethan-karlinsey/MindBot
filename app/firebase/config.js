@@ -3,13 +3,13 @@ import '@firebase/auth'
 import '@firebase/firestore'
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBLo3MIDiCutOt63VqJNkEMgLbI71gxBDE",
-  authDomain: "chatapp-6a550.firebaseapp.com",
-  databaseURL: "https://chatapp-6a550-default-rtdb.firebaseio.com",
-  projectId: "chatapp-6a550",
-  storageBucket: "chatapp-6a550.appspot.com",
-  messagingSenderId: "432038414833",
-  appId: "1:432038414833:web:6a8228bf2fd1f997219c50"
+    apiKey: "AIzaSyCLibki2gMsaJ12iRseyppjfx716FEyjp4",
+    authDomain: "mindbot-f5dee.firebaseapp.com",
+    projectId: "mindbot-f5dee",
+    storageBucket: "mindbot-f5dee.appspot.com",
+    messagingSenderId: "878029594210",
+    appId: "1:878029594210:web:262a7544fac8eaed433b3b",
+    measurementId: "G-RFY3TNS3M4",
 };
 
 if (firebase.apps.length === 0) {
